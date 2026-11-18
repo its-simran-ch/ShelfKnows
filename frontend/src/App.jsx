@@ -3292,10 +3292,10 @@ function App() {
           }}>
             <div style={{ flex: '1 1 360px' }}>
               <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--forest-deep)', marginBottom: '0.35rem' }}>
-                For Curious Minds & Developers
+                Explore the Project Code
               </div>
               <p style={{ fontSize: '0.94rem', color: 'var(--text-muted)', lineHeight: 1.65, margin: 0 }}>
-                ShelfKnows is an open-source project built with Python, FastAPI, and semantic search. If you are curious about the neural pipeline, rerankers, and architecture, feel free to explore the code on GitHub.
+                ShelfKnows is built completely in the open. If you are curious to see how the recommendation engine, neural rerankers, and full-stack architecture are built behind the scenes, feel free to explore the repository on GitHub.
               </p>
             </div>
             <a
