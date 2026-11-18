@@ -3295,7 +3295,7 @@ function App() {
                 Explore the Project Code
               </div>
               <p style={{ fontSize: '0.94rem', color: 'var(--text-muted)', lineHeight: 1.65, margin: 0 }}>
-                ShelfKnows is built completely in the open. If you are curious to see how the recommendation engine, neural rerankers, and full-stack architecture are built behind the scenes, feel free to explore the repository on GitHub.
+                If you are curious to see how the recommendation engine, neural rerankers, and full-stack architecture are built behind the scenes, feel free to explore the ShelfKnows repository on GitHub.
               </p>
             </div>
             <a
