@@ -1846,8 +1846,6 @@ function App() {
 
             <div className="hero-atelier-container">
               <div className="hero-left-content">
-                <div className="hero-handwritten-lead">Dear book lovers,</div>
-
                 <h1 className="hero-headline-serif">
                   Your BookShelf <br />
                   Says More About You <br />
