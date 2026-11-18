@@ -3,8 +3,6 @@ import homeVideo from '../../video/home.mp4'
 import { articlesData } from './data/articles'
 import { supabase } from './lib/supabase'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
-
 const COMMUNITY_GENRES = [
   'Fiction & Drama',
   'Self-Help & Personal Growth',
@@ -1363,7 +1361,7 @@ function App() {
 
   const checkHealth = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/health`)
+      const res = await fetch('http://localhost:8000/health')
       if (res.ok) {
         const data = await res.json()
         setBackendOnline(data.models_loaded)
@@ -1380,8 +1378,8 @@ function App() {
     setLoadingAuthors(true)
     try {
       const url = q.trim()
-        ? `${API_BASE_URL}/api/authors/popular?q=${encodeURIComponent(q.trim())}&limit=80`
-        : `${API_BASE_URL}/api/authors/popular?limit=80`
+        ? `http://localhost:8000/api/authors/popular?q=${encodeURIComponent(q.trim())}&limit=80`
+        : `http://localhost:8000/api/authors/popular?limit=80`
       const res = await fetch(url)
       if (res.ok) {
         const data = await res.json()
@@ -1401,7 +1399,7 @@ function App() {
     setLoadingAuthorBooks(true)
     setAuthorBooks([])
     try {
-      const res = await fetch(`${API_BASE_URL}/api/authors/books?author=${encodeURIComponent(authorName)}&limit=60`)
+      const res = await fetch(`http://localhost:8000/api/authors/books?author=${encodeURIComponent(authorName)}&limit=60`)
       if (res.ok) {
         const data = await res.json()
         const sortedAuthorBooks = (data.books || []).slice().sort((a, b) => {
@@ -1471,7 +1469,7 @@ function App() {
     }, 100)
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/recommend`, {
+      const response = await fetch('http://localhost:8000/api/recommend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1511,7 +1509,7 @@ function App() {
     const targetGenre = (genreName && genreName !== 'All Genres') ? genreName : 'Fantasy & Magic'
     setLoadingGenreBooks(true)
     try {
-      const res = await fetch(`${API_BASE_URL}/api/genres/books?genre=${encodeURIComponent(targetGenre)}&limit=20`)
+      const res = await fetch(`http://localhost:8000/api/genres/books?genre=${encodeURIComponent(targetGenre)}&limit=20`)
       if (res.ok) {
         const data = await res.json()
         setGenreBooks(data.books || [])
