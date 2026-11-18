@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="100%" height="100%">
+  <defs>
+    <radialGradient id="voyeurBg" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#142c22" />
+      <stop offset="50%" stop-color="#091811" />
+      <stop offset="85%" stop-color="#040b07" />
+      <stop offset="100%" stop-color="#020503" />
+    </radialGradient>
+    <radialGradient id="lanternGlow" cx="50%" cy="45%" r="45%">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.45" />
+      <stop offset="40%" stop-color="#d97706" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#040b07" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="brassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="30%" stop-color="#ca8a04" />
+      <stop offset="70%" stop-color="#a16207" />
+      <stop offset="100%" stop-color="#713f12" />
+    </linearGradient>
+    <linearGradient id="lensReflect" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="35%" stop-color="#6ee7b7" stop-opacity="0.1" />
+      <stop offset="70%" stop-color="#047857" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.15" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="675" fill="url(#voyeurBg)" />
+  <rect width="1200" height="675" fill="url(#lanternGlow)" />
+
+  <!-- Victorian Library Shelves in Background -->
+  <g opacity="0.35" stroke="#064e3b" stroke-width="2">
+    <!-- Vertical Uprights -->
+    <line x1="120" y1="50" x2="120" y2="625" stroke-width="8" stroke="#1b3d2f" />
+    <line x1="320" y1="50" x2="320" y2="625" stroke-width="8" stroke="#1b3d2f" />
+    <line x1="880" y1="50" x2="880" y2="625" stroke-width="8" stroke="#1b3d2f" />
+    <line x1="1080" y1="50" x2="1080" y2="625" stroke-width="8" stroke="#1b3d2f" />
+
+    <!-- Shelves Horizontals -->
+    <rect x="60" y="180" width="1080" height="14" fill="#1e3a2b" stroke="#042f2e" />
+    <rect x="60" y="340" width="1080" height="14" fill="#1e3a2b" stroke="#042f2e" />
+    <rect x="60" y="500" width="1080" height="14" fill="#1e3a2b" stroke="#042f2e" />
+
+    <!-- Distant Book Spines -->
+    <!-- Shelf 1 (top) -->
+    <rect x="130" y="80" width="22" height="100" fill="#991b1b" />
+    <rect x="155" y="70" width="28" height="110" fill="#1e40af" />
+    <rect x="186" y="90" width="18" height="90" fill="#854d0e" />
+    <rect x="207" y="65" width="32" height="115" fill="#065f46" />
+    <rect x="242" y="85" width="24" height="95" fill="#374151" />
+    <rect x="269" y="75" width="45" height="105" fill="#581c87" />
+
+    <rect x="890" y="75" width="30" height="105" fill="#78350f" />
+    <rect x="923" y="65" width="25" height="115" fill="#1e3a8a" />
+    <rect x="951" y="85" width="35" height="95" fill="#991b1b" />
+    <rect x="989" y="70" width="28" height="110" fill="#047857" />
+    <rect x="1020" y="80" width="50" height="100" fill="#3f3f46" />
+
+    <!-- Shelf 2 (middle) -->
+    <rect x="130" y="230" width="35" height="110" fill="#312e81" />
+    <rect x="168" y="240" width="22" height="100" fill="#831843" />
+    <rect x="193" y="220" width="30" height="120" fill="#713f12" />
+    <rect x="226" y="250" width="40" height="90" fill="#064e3b" />
+    <rect x="269" y="235" width="45" height="105" fill="#701a75" />
+
+    <rect x="890" y="225" width="26" height="115" fill="#1e293b" />
+    <rect x="919" y="245" width="34" height="95" fill="#9a3412" />
+    <rect x="956" y="230" width="28" height="110" fill="#14532d" />
+    <rect x="987" y="220" width="38" height="120" fill="#581c87" />
+    <rect x="1028" y="240" width="42" height="100" fill="#1e3a8a" />
+  </g>
+
+  <!-- Ornate Center Looking-Glass / Magnifying Lens -->
+  <g transform="translate(600, 335)">
+    <!-- Brass Lens Shadow -->
+    <circle cx="0" cy="8" r="185" fill="#020805" opacity="0.8" />
+
+    <!-- Outer Brass Rim -->
+    <circle cx="0" cy="0" r="185" fill="none" stroke="url(#brassGrad)" stroke-width="16" />
+    <circle cx="0" cy="0" r="176" fill="none" stroke="#291807" stroke-width="2" />
+    <circle cx="0" cy="0" r="172" fill="none" stroke="url(#brassGrad)" stroke-width="2" stroke-dasharray="4,6" />
+
+    <!-- Magnifying Glass Lens Interior -->
+    <circle cx="0" cy="0" r="170" fill="#081e14" />
+    <circle cx="0" cy="0" r="170" fill="url(#lensReflect)" />
+
+    <!-- Magnified Illuminated Books Inside the Lens -->
+    <!-- Detailed Spine 1: Ego & Acclaim -->
+    <rect x="-140" y="-120" width="45" height="235" rx="3" fill="#b91c1c" stroke="url(#brassGrad)" stroke-width="1" />
+    <text x="-118" y="-10" font-family="'Fraunces', serif" font-size="11" fill="#fef08a" transform="rotate(-90 -118 -10)" letter-spacing="3">PHILOSOPHY &amp; EGO</text>
+    <line x1="-140" y1="-90" x2="-95" y2="-90" stroke="url(#brassGrad)" stroke-width="1.5" />
+    <line x1="-140" y1="85" x2="-95" y2="85" stroke="url(#brassGrad)" stroke-width="1.5" />
+
+    <!-- Detailed Spine 2: Aspirational Classics -->
+    <rect x="-90" y="-145" width="55" height="260" rx="3" fill="#1e3a8a" stroke="url(#brassGrad)" stroke-width="1.2" />
+    <text x="-63" y="-15" font-family="'Fraunces', serif" font-size="12" fill="#fef08a" transform="rotate(-90 -63 -15)" letter-spacing="3">THE CANON &amp; PRIDE</text>
+    <circle cx="-63" cy="-115" r="5" fill="url(#brassGrad)" />
+    <circle cx="-63" cy="85" r="5" fill="url(#brassGrad)" />
+
+    <!-- Detailed Spine 3: The Secret Solitude (Center highlight) -->
+    <rect x="-30" y="-160" width="60" height="275" rx="4" fill="#065f46" stroke="url(#brassGrad)" stroke-width="2" />
+    <text x="0" y="-20" font-family="'Fraunces', serif" font-size="13" font-weight="700" fill="#fef08a" transform="rotate(-90 0 -20)" letter-spacing="4">UNREAD SANCTUARY</text>
+    <polygon points="0,-140 -8,-125 8,-125" fill="url(#brassGrad)" />
+    <polygon points="0,85 -8,70 8,70" fill="url(#brassGrad)" />
+
+    <!-- Detailed Spine 4: Guilty Pleasures -->
+    <rect x="35" y="-130" width="48" height="245" rx="3" fill="#854d0e" stroke="url(#brassGrad)" stroke-width="1" />
+    <text x="59" y="-10" font-family="'Fraunces', serif" font-size="11" fill="#fef08a" transform="rotate(-90 59 -10)" letter-spacing="3">SECRET ESCAPISM</text>
+    <line x1="35" y1="-100" x2="83" y2="-100" stroke="url(#brassGrad)" stroke-width="1.2" />
+    <line x1="35" y1="80" x2="83" y2="80" stroke="url(#brassGrad)" stroke-width="1.2" />
+
+    <!-- Detailed Spine 5: Dark Mysteries -->
+    <rect x="88" y="-115" width="45" height="230" rx="3" fill="#4a044e" stroke="url(#brassGrad)" stroke-width="1" />
+    <text x="110" y="-5" font-family="'Fraunces', serif" font-size="11" fill="#fef08a" transform="rotate(-90 110 -5)" letter-spacing="3">UNSPOKEN SHADOWS</text>
+
+    <!-- Glass Reflection Slash Arc -->
+    <path d="M -120,-90 Q 0,-150 120,-90 Q 60,-60 -120,-90 Z" fill="#ffffff" opacity="0.12" />
+
+    <!-- Ornate Brass Handle pointing downward-right -->
+    <g transform="rotate(45) translate(185, 0)">
+      <rect x="0" y="-12" width="130" height="24" rx="6" fill="url(#brassGrad)" stroke="#451a03" stroke-width="2" />
+      <circle cx="120" cy="0" r="16" fill="url(#brassGrad)" stroke="#451a03" stroke-width="2" />
+      <circle cx="120" cy="0" r="6" fill="#1b3d2f" />
+    </g>
+  </g>
+
+  <!-- Ornate Outer Border -->
+  <rect x="36" y="36" width="1128" height="603" fill="none" stroke="url(#brassGrad)" stroke-width="1.5" opacity="0.6" />
+  <rect x="44" y="44" width="1112" height="587" fill="none" stroke="url(#brassGrad)" stroke-width="0.8" opacity="0.3" stroke-dasharray="4,6" />
+
+  <!-- Typography Overlay Header -->
+  <text x="600" y="86" font-family="'Fraunces', serif" font-size="21" font-weight="700" fill="url(#brassGrad)" text-anchor="middle" letter-spacing="4">THE PSYCHOLOGICAL MIRROR</text>
+  <text x="600" y="110" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="600" fill="#6ee7b7" text-anchor="middle" letter-spacing="2">DECODING INSECURITIES, AMBITION &amp; UNREAD SHADOWS</text>
+</svg>
