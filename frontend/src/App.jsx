@@ -1926,15 +1926,7 @@ function App() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem' }}>
                   <span style={{ color: 'var(--text-muted)' }}>Show:</span>
                   <select
-                    style={{
-                      background: 'var(--bg-surface)',
-                      border: '1px solid var(--border-warm)',
-                      borderRadius: '8px',
-                      padding: '0.3rem 0.6rem',
-                      fontSize: '0.82rem',
-                      color: 'var(--forest-deep)',
-                      fontWeight: 600
-                    }}
+                    className="curator-select-dropdown"
                     value={topK}
                     onChange={(e) => setTopK(e.target.value)}
                   >

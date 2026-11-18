@@ -906,6 +906,36 @@ body {
   gap: 1.2rem;
 }
 
+.curator-select-dropdown {
+  background-color: var(--bg-surface);
+  border: 1.5px solid var(--border-warm);
+  border-radius: 9px;
+  padding: 0.35rem 2rem 0.35rem 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--forest-deep);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23121212' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  background-size: 11px 11px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.curator-select-dropdown:hover {
+  border-color: var(--forest-deep);
+}
+
+.curator-select-dropdown:focus {
+  border-color: var(--forest-deep);
+  box-shadow: 0 0 0 2px rgba(18, 18, 18, 0.08);
+}
+
 .speed-badge-atelier {
   font-size: 0.82rem;
   font-weight: 800;
