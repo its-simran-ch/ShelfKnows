@@ -123,215 +123,19 @@ const MALE_AVATAR_SRC = '/Avatar/male_profile.png?v=3'
 const INITIAL_COMMUNITY_POSTS = [
   {
     id: 'post-1',
-    book_title: 'Before the Coffee Gets Cold',
-    book_author: 'Toshikazu Kawaguchi',
-    book_cover: 'https://covers.openlibrary.org/b/id/10627870-M.jpg',
-    genre: 'Fiction & Drama',
-    why_loved: 'A quiet, tender reminder about time, regret, and the words we leave unsaid. If you could travel back in time for as long as a cup of coffee stays warm, who would you want to meet? The underground cafe setting is so comforting and deeply emotional.',
-    favorite_quote: 'Water flows from higher to lower places, that is the nature of gravity. Emotions, too, seem to follow this law.',
-    author_name: 'Simran Chaudhary',
-    author_role: 'Reader',
-    avatar: FEMALE_AVATAR_SRC,
-    date: '2 days ago',
-    likes: 14,
-    user_liked: false,
-    liked_by: [
-      { name: 'Aanya Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Kabir Verma', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Priya N.', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rohan Mehta', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aditya S.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Meera Sen', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Tanvi Joshi', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Devansh K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Isha Patel', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Arjun Rao', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Sneha Roy', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Zoya Khan', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Karan Malik', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Ananya Gupta', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC }
-    ],
-    comments: [
-      {
-        id: 'c-1-1',
-        author_name: 'Aanya Sharma',
-        avatar: FEMALE_AVATAR_SRC,
-        gender: 'female',
-        text: 'Chapter 2 made me call my sister immediately. Such a comforting read on a rainy evening! ☕',
-        date: 'Yesterday'
-      },
-      {
-        id: 'c-1-2',
-        author_name: 'Simran Chaudhary',
-        avatar: FEMALE_AVATAR_SRC,
-        gender: 'female',
-        text: 'Right? The idea of traveling back just for closure without changing the present was so heartbreaking yet peaceful. 🤍',
-        date: 'Yesterday'
-      }
-    ]
-  },
-  {
-    id: 'post-2',
-    book_title: 'Days at the Morisaki Bookshop',
-    book_author: 'Satoshi Yagisawa',
-    book_cover: 'https://covers.openlibrary.org/b/isbn/9781786583239-M.jpg',
-    genre: 'Fiction & Drama',
-    why_loved: 'For anyone who has ever felt lost in their twenties and found unexpected solace between old secondhand book covers in a quiet Tokyo neighborhood. Reading this felt like taking a deep, healing breath.',
-    favorite_quote: "There are times in a person's life when those things that are quiet and small become the most powerful.",
-    author_name: 'Kabir Verma',
-    author_role: 'Reader',
-    avatar: MALE_AVATAR_SRC,
-    date: '4 days ago',
-    likes: 9,
-    user_liked: false,
-    liked_by: [
-      { name: 'Rohan Mehta', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aanya Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Priya N.', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Meera Sen', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Aditya S.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tanvi Joshi', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Isha Patel', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Arjun Rao', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Simran Chaudhary', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC }
-    ],
-    comments: [
-      {
-        id: 'c-2-1',
-        author_name: 'Rohan Mehta',
-        avatar: MALE_AVATAR_SRC,
-        gender: 'male',
-        text: 'Jimbocho used bookstores are now officially on my travel bucket list because of this book!',
-        date: '3 days ago'
-      }
-    ]
-  },
-  {
-    id: 'post-3',
-    book_title: 'The Midnight Library',
-    book_author: 'Matt Haig',
-    book_cover: 'https://covers.openlibrary.org/b/id/10313767-M.jpg',
-    genre: 'Sci-Fi & Fantasy',
-    why_loved: 'Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. It cured so much of my retrospective regret and late-night overthinking.',
-    favorite_quote: "You don't have to understand life, you just have to live it.",
-    author_name: 'Priya N.',
-    author_role: 'Reader',
-    avatar: FEMALE_AVATAR_SRC,
-    gender: 'female',
-    date: '5 days ago',
-    likes: 18,
-    user_liked: false,
-    liked_by: [
-      { name: 'Simran Chaudhary', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Kabir Verma', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aanya Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rohan Mehta', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Meera Sen', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Aditya S.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tanvi Joshi', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Devansh K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Isha Patel', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Arjun Rao', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Sneha Roy', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Zoya Khan', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Karan Malik', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Ananya Gupta', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rahul V.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Pooja Bhatia', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Vikram Seth', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tara Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC }
-    ],
-    comments: [
-      {
-        id: 'c-3-1',
-        author_name: 'Simran Chaudhary',
-        avatar: FEMALE_AVATAR_SRC,
-        gender: 'female',
-        text: 'The concept of the Midnight Library is so profoundly comforting. Highly recommend it to anyone who wonders about their unchosen paths! 📚',
-        date: '4 days ago'
-      }
-    ]
-  },
-  {
-    id: 'post-4',
-    book_title: 'Atomic Habits',
-    book_author: 'James Clear',
-    book_cover: 'https://covers.openlibrary.org/b/id/12886417-M.jpg',
+    book_title: "Don't Believe Everything You Think",
+    book_author: 'Joseph Nguyen',
+    book_cover: 'https://covers.openlibrary.org/b/id/15158200-M.jpg',
     genre: 'Self-Help & Personal Growth',
-    why_loved: 'It completely shifted my mindset from setting overwhelming goals to building tiny daily rituals. 1% better every day sounds cliché until you actually live it and look back after six months.',
-    favorite_quote: 'You do not rise to the level of your goals. You fall to the level of your systems.',
-    author_name: 'Aditya S.',
-    author_role: 'Reader',
-    avatar: MALE_AVATAR_SRC,
-    date: '6 days ago',
-    likes: 24,
-    user_liked: false,
-    liked_by: [
-      { name: 'Kabir Verma', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aanya Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Simran Chaudhary', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Priya N.', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rohan Mehta', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Meera Sen', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Tanvi Joshi', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Devansh K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Isha Patel', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Arjun Rao', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Sneha Roy', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Zoya Khan', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Karan Malik', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Ananya Gupta', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rahul V.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Pooja Bhatia', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Vikram Seth', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tara Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Naveen K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Geeta Nair', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Deepak Chopra', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Shreya Das', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Varun Dhawan', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Rhea Kapoor', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC }
-    ],
-    comments: []
-  },
-  {
-    id: 'post-5',
-    book_title: 'Meditations',
-    book_author: 'Marcus Aurelius',
-    book_cover: 'https://covers.openlibrary.org/b/isbn/0812968255-M.jpg',
-    genre: 'Philosophy & Spirituality',
-    why_loved: 'Written over 1,800 years ago as the personal diary of a Roman emperor talking to himself about quiet discipline, impermanence, and inner stillness. Every page is a grounding anchor when life feels chaotic.',
-    favorite_quote: 'You have power over your mind — not outside events. Realize this, and you will find strength.',
-    author_name: 'Meera Sen',
-    author_role: 'Reader',
+    why_loved: "A deeply grounding read on how our suffering doesn't come from external circumstances, but from our compulsive overthinking about them. It reminds you that peace isn't something you create — it's what's left when you stop believing every anxious thought your mind generates.",
+    favorite_quote: 'Thinking is not the solution to our suffering; it is the cause of it. When we stop overthinking, our natural state of peace and joy effortlessly returns.',
+    author_name: 'Simran Chaudhary',
+    author_role: 'Creator & Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
-    gender: 'female',
-    date: '1 week ago',
-    likes: 21,
+    date: 'Currently Reading',
+    likes: 6,
     user_liked: false,
-    liked_by: [
-      { name: 'Simran Chaudhary', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Kabir Verma', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aanya Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Priya N.', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rohan Mehta', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Aditya S.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tanvi Joshi', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Devansh K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Isha Patel', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Arjun Rao', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Sneha Roy', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Zoya Khan', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Karan Malik', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Ananya Gupta', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Rahul V.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Pooja Bhatia', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Vikram Seth', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Tara Sharma', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Naveen K.', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC },
-      { name: 'Geeta Nair', role: 'Fellow Reader', avatar: FEMALE_AVATAR_SRC },
-      { name: 'Deepak Chopra', role: 'Fellow Reader', avatar: MALE_AVATAR_SRC }
-    ],
+    liked_by: [],
     comments: []
   }
 ]
@@ -539,7 +343,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts')
+      const local = localStorage.getItem('shelfknows_community_posts_v4')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -599,7 +403,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v4', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
