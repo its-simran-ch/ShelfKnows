@@ -130,7 +130,7 @@ const INITIAL_COMMUNITY_POSTS = [
     why_loved: "A deeply grounding read on how our suffering doesn't come from external circumstances, but from our compulsive overthinking about them. It reminds you that peace isn't something you create — it's what's left when you stop believing every anxious thought your mind generates.",
     favorite_quote: 'You are not fundamentally broken. You are not a problem to be fixed, but a human who is meant to be understood.',
     author_name: 'Simran Chaudhary',
-    author_role: 'Creator & Fellow Reader',
+    author_role: 'Creator of ShelfKnows & Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
     date: 'Currently Reading',
     likes: 0,
@@ -168,6 +168,7 @@ function App() {
   const [authEmail, setAuthEmail] = useState('')
   const [authPassword, setAuthPassword] = useState('')
   const [authFullName, setAuthFullName] = useState('')
+  const [authHeadline, setAuthHeadline] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState(null)
   const [authSuccessMsg, setAuthSuccessMsg] = useState(null)
@@ -175,6 +176,7 @@ function App() {
   const [showEditProfileModal, setShowEditProfileModal] = useState(false)
   const [editName, setEditName] = useState('')
   const [editGender, setEditGender] = useState('female')
+  const [editHeadline, setEditHeadline] = useState('')
   const [editBio, setEditBio] = useState('')
   const [editLoading, setEditLoading] = useState(false)
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
@@ -343,7 +345,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts_v6')
+      const local = localStorage.getItem('shelfknows_community_posts_v7')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -373,6 +375,7 @@ function App() {
             const authorGender = p.gender || initialMatch?.gender || null
             return {
               ...p,
+              author_role: p.author_role || initialMatch?.author_role || 'Reader',
               avatar: resolveAvatar(initialMatch?.avatar || p.avatar, authorName, authorGender),
               gender: authorGender || (resolveAvatar(null, authorName, null).includes('male') ? 'male' : 'female'),
               book_cover: initialMatch?.book_cover || p.book_cover || null,
@@ -403,7 +406,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts_v6', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v7', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
@@ -416,6 +419,7 @@ function App() {
   const [commWhyLoved, setCommWhyLoved] = useState('')
   const [commQuote, setCommQuote] = useState('')
   const [commAuthorName, setCommAuthorName] = useState('')
+  const [commAuthorRole, setCommAuthorRole] = useState('')
   const [commentInputs, setCommentInputs] = useState({})
   const [commenterNameInputs, setCommenterNameInputs] = useState({})
   const [openComments, setOpenComments] = useState({})
@@ -452,6 +456,8 @@ function App() {
       coverUrl = null
     }
 
+    const authorHeadline = commAuthorRole.trim() || profile?.headline || user?.user_metadata?.headline || 'Reader'
+
     const newPost = {
       id: `post-${Date.now()}`,
       author_id: user?.id || null,
@@ -462,15 +468,13 @@ function App() {
       why_loved: commWhyLoved.trim(),
       favorite_quote: commQuote.trim() || '',
       author_name: authorDisplayName,
-      author_role: 'Reader',
+      author_role: authorHeadline,
       avatar: activeAvatar,
       gender: userAvatar,
       date: 'Just now',
-      likes: 1,
-      user_liked: true,
-      liked_by: [
-        { name: authorDisplayName, role: 'Fellow Reader', avatar: activeAvatar, gender: userAvatar }
-      ],
+      likes: 0,
+      user_liked: false,
+      liked_by: [],
       comments: []
     }
 
@@ -481,6 +485,7 @@ function App() {
     setCommWhyLoved('')
     setCommQuote('')
     setCommAuthorName('')
+    setCommAuthorRole('')
     setShowCommunityForm(false)
   }
 
@@ -985,6 +990,7 @@ function App() {
     setEditLoading(true)
     try {
       const cleanName = editName.trim() || 'Reader'
+      const cleanHeadline = editHeadline.trim() || 'Reader'
 
       // 1. Update Supabase Auth user_metadata
       if (user) {
@@ -992,6 +998,7 @@ function App() {
           const { data: authData } = await supabase.auth.updateUser({
             data: {
               full_name: cleanName,
+              headline: cleanHeadline,
               avatar_gender: editGender
             }
           })
@@ -1016,6 +1023,7 @@ function App() {
             .from('profiles')
             .update({
               full_name: cleanName,
+              headline: cleanHeadline,
               bio: editBio
             })
             .eq('id', user.id)
@@ -1027,6 +1035,7 @@ function App() {
       setProfile(prev => ({
         ...(prev || {}),
         full_name: cleanName,
+        headline: cleanHeadline,
         bio: editBio
       }))
 
@@ -1133,6 +1142,7 @@ function App() {
         options: {
           data: {
             full_name: authFullName || 'Reader',
+            headline: authHeadline.trim() || 'Reader',
             avatar_gender: authGender
           }
         }
@@ -1145,6 +1155,7 @@ function App() {
         setAuthEmail('')
         setAuthPassword('')
         setAuthFullName('')
+        setAuthHeadline('')
       } else {
         setAuthSuccessMsg('Account created successfully! You can now sign in.')
       }
@@ -3151,6 +3162,9 @@ function App() {
                     <h1 className="profile-name-title">
                       {profile?.full_name || user?.user_metadata?.full_name || 'Reader'}
                     </h1>
+                    <div style={{ fontSize: '0.92rem', color: 'var(--forest-deep)', fontWeight: 600, marginTop: '0.2rem', marginBottom: '0.25rem' }}>
+                      {profile?.headline || user?.user_metadata?.headline || 'Reader & Story Explorer'}
+                    </div>
                     <div className="profile-email-sub">
                       {user?.email}
                     </div>
@@ -3162,6 +3176,7 @@ function App() {
                         onClick={() => {
                           setEditName(profile?.full_name || user?.user_metadata?.full_name || '')
                           setEditGender(userAvatar || 'female')
+                          setEditHeadline(profile?.headline || user?.user_metadata?.headline || '')
                           setEditBio(profile?.bio || '')
                           setShowEditProfileModal(true)
                         }}
@@ -3878,18 +3893,33 @@ function App() {
                   />
                 </div>
 
-                {/* Row 4: Your Name / Alias */}
-                <div style={{ marginBottom: '1.6rem' }}>
-                  <label className="recommend-label">
-                    <span>Your Name or Alias</span> <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    className="recommend-input"
-                    placeholder="e.g. Simran Chaudhary"
-                    value={commAuthorName}
-                    onChange={(e) => setCommAuthorName(e.target.value)}
-                  />
+                {/* Row 4: Your Name & Reader Headline */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.2rem', marginBottom: '1.6rem' }}>
+                  <div>
+                    <label className="recommend-label">
+                      <span>Your Name or Alias</span> <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="recommend-input"
+                      placeholder="e.g. Simran Chaudhary"
+                      value={commAuthorName}
+                      onChange={(e) => setCommAuthorName(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="recommend-label">
+                      <span>Reader Headline / Tagline</span> <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      className="recommend-input"
+                      placeholder="e.g. Student, Software Engineer, Avid Reader"
+                      value={commAuthorRole}
+                      onChange={(e) => setCommAuthorRole(e.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <p style={{
@@ -4027,8 +4057,8 @@ function App() {
                               {post.author_name || 'Reader'}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-                            Recommended • {post.date}
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                            {post.author_role || 'Reader'} • {post.date}
                           </div>
                         </div>
                       </div>
@@ -4811,6 +4841,28 @@ function App() {
                       </button>
                     </div>
                   </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Reader Headline <span style={{ color: 'var(--text-muted)', fontWeight: 400, textTransform: 'none' }}>(Optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Student, Software Engineer, Avid Reader"
+                      value={authHeadline}
+                      onChange={(e) => setAuthHeadline(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '10px',
+                        border: '1.2px solid var(--border-warm)',
+                        background: 'var(--bg-surface)',
+                        fontSize: '0.92rem',
+                        fontFamily: 'inherit',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
                 </>
               )}
 
@@ -4999,6 +5051,29 @@ function App() {
                     Male
                   </button>
                 </div>
+              </div>
+
+              {/* Reader Headline */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Reader Headline <span style={{ color: 'var(--text-muted)', fontWeight: 400, textTransform: 'none' }}>(Optional)</span>
+                </label>
+                <input
+                  type="text"
+                  value={editHeadline}
+                  onChange={(e) => setEditHeadline(e.target.value)}
+                  placeholder="e.g. Student, Software Engineer, Avid Reader, Creator of ShelfKnows"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '10px',
+                    border: '1.2px solid var(--border-warm)',
+                    background: 'var(--bg-surface)',
+                    fontSize: '0.92rem',
+                    fontFamily: 'inherit',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
 
               {/* Bio / Reflection */}
