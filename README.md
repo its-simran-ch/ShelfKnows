@@ -3,8 +3,10 @@ title: ShelfKnows AI Backend
 emoji: 📚
 colorFrom: yellow
 colorTo: indigo
-sdk: docker
-app_port: 7860
+sdk: gradio
+sdk_version: 4.44.0
+app_file: app.py
+pinned: false
 ---
 
 # ShelfKnows — Production Hybrid AI Book Recommendation & Discovery Engine
@@ -15,5 +17,5 @@ An intelligent library crafted for lovers of deep reading. Powered by BM25 lexic
 - **Hybrid Retrieval:** Sparse BM25 + Dense Sentence-Transformers + Reciprocal Rank Fusion (RRF)
 - **Neural Reranking:** Cross-Encoder transformer model for subtle query nuance
 - **Dataset:** 50,000+ curated Goodreads titles with rich thematic metadata
-- **Backend Framework:** FastAPI & Uvicorn
+- **Backend Framework:** FastAPI & Gradio on Hugging Face Spaces (ZeroGPU Free)
 - **Live Frontend:** Hosted on Vercel
