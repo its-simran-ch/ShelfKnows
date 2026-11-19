@@ -5,8 +5,16 @@ import gradio as gr
 # Ensure project root is in python path
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
+try:
+    import spaces
+    gpu_decorator = spaces.GPU
+except Exception:
+    def gpu_decorator(fn):
+        return fn
+
 from src.api.main import app as fastapi_app, get_recommendations, RecommendationRequest
 
+@gpu_decorator
 def search_books_gradio(query, top_k):
     if not query or not query.strip():
         return "Please enter a book vibe, theme, or mood."
