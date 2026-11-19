@@ -130,9 +130,9 @@ const INITIAL_COMMUNITY_POSTS = [
     why_loved: "A deeply grounding read on how our suffering doesn't come from external circumstances, but from our compulsive overthinking about them. It reminds you that peace isn't something you create — it's what's left when you stop believing every anxious thought your mind generates.",
     favorite_quote: 'You are not fundamentally broken. You are not a problem to be fixed, but a human who is meant to be understood.',
     author_name: 'Simran Chaudhary',
-    author_role: 'Creator of ShelfKnows & Fellow Reader',
+    author_role: 'Your Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
-    date: 'Currently Reading',
+    date: '',
     likes: 0,
     user_liked: false,
     liked_by: [],
@@ -345,7 +345,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts_v7')
+      const local = localStorage.getItem('shelfknows_community_posts_v8')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -375,7 +375,8 @@ function App() {
             const authorGender = p.gender || initialMatch?.gender || null
             return {
               ...p,
-              author_role: p.author_role || initialMatch?.author_role || 'Reader',
+              author_role: p.id === 'post-1' ? 'Your Fellow Reader' : (p.author_role || initialMatch?.author_role || 'Reader'),
+              date: p.id === 'post-1' ? '' : (p.date !== undefined ? p.date : (initialMatch?.date || '')),
               avatar: resolveAvatar(initialMatch?.avatar || p.avatar, authorName, authorGender),
               gender: authorGender || (resolveAvatar(null, authorName, null).includes('male') ? 'male' : 'female'),
               book_cover: initialMatch?.book_cover || p.book_cover || null,
@@ -406,7 +407,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts_v7', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v8', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
@@ -4058,7 +4059,7 @@ function App() {
                             </span>
                           </div>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
-                            {post.author_role || 'Reader'} • {post.date}
+                            {post.author_role || 'Reader'}{post.date ? ` • ${post.date}` : ''}
                           </div>
                         </div>
                       </div>
