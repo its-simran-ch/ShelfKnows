@@ -133,7 +133,7 @@ const INITIAL_COMMUNITY_POSTS = [
     author_role: 'Creator & Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
     date: 'Currently Reading',
-    likes: 6,
+    likes: 0,
     user_liked: false,
     liked_by: [],
     comments: []
@@ -343,7 +343,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts_v4')
+      const local = localStorage.getItem('shelfknows_community_posts_v5')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -403,7 +403,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts_v4', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v5', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
