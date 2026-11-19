@@ -4076,13 +4076,31 @@ function App() {
                       </p>
                     </div>
 
-                    {/* Favorite Quote (if any) */}
+                    {/* Favorite Quote (styled elegantly like A Note from the Creator) */}
                     {post.favorite_quote && (
-                      <div style={{ marginBottom: '1.2rem' }}>
-                        <div className="community-section-label">Favorite Line / Quote</div>
-                        <div className="community-quote-box" style={{ margin: '0.4rem 0 0 0', fontSize: '0.94rem' }}>
-                          “{post.favorite_quote}”
+                      <div style={{ marginTop: '1.5rem', marginBottom: '1.6rem', textAlign: 'center', padding: '0.4rem 0.5rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                          <span className="quote-badge-pill" style={{ marginBottom: 0, padding: '0.35rem 0.95rem', fontSize: '0.68rem', letterSpacing: '0.12em' }}>
+                            Favorite Line / Quote
+                          </span>
                         </div>
+                        <p
+                          className="literary-quote-text"
+                          style={{
+                            fontSize: '1.22rem',
+                            lineHeight: 1.68,
+                            margin: '0 auto 0.75rem auto',
+                            maxWidth: '100%',
+                            textAlign: 'center'
+                          }}
+                        >
+                          “{post.favorite_quote.replace(/^[“"']+|[”"']+$/g, '')}”
+                        </p>
+                        {post.book_author && (
+                          <div className="literary-quote-author" style={{ fontSize: '0.74rem', letterSpacing: '0.14em' }}>
+                            — {post.book_author}
+                          </div>
+                        )}
                       </div>
                     )}
 
