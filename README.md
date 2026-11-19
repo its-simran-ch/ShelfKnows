@@ -1,14 +1,3 @@
----
-title: ShelfKnows AI Backend
-emoji: 📚
-colorFrom: yellow
-colorTo: indigo
-sdk: gradio
-sdk_version: 4.44.0
-app_file: app.py
-pinned: false
----
-
 <div align="center">
 
   <img src="frontend/public/logo-transparent.png" alt="ShelfKnows Logo" width="140" />
