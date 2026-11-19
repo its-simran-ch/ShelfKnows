@@ -128,7 +128,7 @@ const INITIAL_COMMUNITY_POSTS = [
     book_cover: 'https://covers.openlibrary.org/b/id/15158200-M.jpg',
     genre: 'Self-Help & Personal Growth',
     why_loved: "A deeply grounding read on how our suffering doesn't come from external circumstances, but from our compulsive overthinking about them. It reminds you that peace isn't something you create — it's what's left when you stop believing every anxious thought your mind generates.",
-    favorite_quote: 'Thinking is not the solution to our suffering; it is the cause of it. When we stop overthinking, our natural state of peace and joy effortlessly returns.',
+    favorite_quote: 'You are not fundamentally broken. You are not a problem to be fixed, but a human who is meant to be understood.',
     author_name: 'Simran Chaudhary',
     author_role: 'Creator & Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
@@ -343,7 +343,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts_v5')
+      const local = localStorage.getItem('shelfknows_community_posts_v6')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -403,7 +403,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts_v5', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v6', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
@@ -4089,18 +4089,13 @@ function App() {
                           style={{
                             fontSize: '1.22rem',
                             lineHeight: 1.68,
-                            margin: '0 auto 0.75rem auto',
+                            margin: '0 auto',
                             maxWidth: '100%',
                             textAlign: 'center'
                           }}
                         >
                           “{post.favorite_quote.replace(/^[“"']+|[”"']+$/g, '')}”
                         </p>
-                        {post.book_author && (
-                          <div className="literary-quote-author" style={{ fontSize: '0.74rem', letterSpacing: '0.14em' }}>
-                            — {post.book_author}
-                          </div>
-                        )}
                       </div>
                     )}
 
