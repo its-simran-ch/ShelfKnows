@@ -3079,7 +3079,7 @@ function App() {
           }}>
             <div style={{ flex: '1 1 360px' }}>
               <div style={{ fontSize: '0.76rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--forest-deep)', marginBottom: '0.35rem' }}>
-                Explore the Project Code
+                Explore the Code
               </div>
               <p style={{ fontSize: '0.94rem', color: 'var(--text-muted)', lineHeight: 1.65, margin: 0 }}>
                 If you are curious to see how the recommendation engine, neural rerankers, and full-stack architecture are built behind the scenes, feel free to explore the ShelfKnows repository on GitHub.
