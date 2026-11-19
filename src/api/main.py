@@ -105,57 +105,63 @@ def get_recommendations(req: RecommendationRequest):
 
     start_time = time.time()
 
-    # Stage 1: Fast Hybrid Retrieval (fetch top candidates)
-    candidate_pool_size = max(req.top_k * 2, 10)
-    candidates = hybrid_engine.search(req.query, top_k=candidate_pool_size)
+    try:
+        # Stage 1: Fast Hybrid Retrieval (fetch top candidates)
+        candidate_pool_size = max(req.top_k * 2, 10)
+        candidates = hybrid_engine.search(req.query, top_k=candidate_pool_size)
 
-    if not candidates:
+        if not candidates:
+            return RecommendationResponse(
+                query=req.query,
+                total_results=0,
+                latency_ms=round((time.time() - start_time) * 1000, 2),
+                recommendations=[]
+            )
+
+        # Stage 2: Neural Cross-Encoder Reranking
+        if req.rerank:
+            final_books = reranker.rerank(req.query, candidates, top_k=req.top_k)
+        else:
+            final_books = candidates[:req.top_k]
+
+        # Sort recommendations by highest rating first (descending)
+        final_books = sorted(
+            final_books,
+            key=lambda b: float(b.get('average_rating', 0.0) if b.get('average_rating') is not None else 0.0),
+            reverse=True
+        )
+
+        # Stage 3: Attach Explainable AI Rationale
+        explained_books = explainer.attach_explanations(req.query, final_books)
+
+        elapsed_ms = round((time.time() - start_time) * 1000, 2)
+
+        # Format response
+        formatted_recommendations = [
+            BookResponse(
+                book_id=b.get('book_id'),
+                title=b.get('title', 'Unknown Title'),
+                authors=b.get('authors', 'Unknown Author'),
+                genres=b.get('genres', 'Fiction'),
+                average_rating=float(b.get('average_rating', 4.0)),
+                description=synopsis_enricher.get_synopsis(b),
+                image_url=b.get('image_url'),
+                ai_explanation=b.get('ai_explanation')
+            )
+            for b in explained_books
+        ]
+
         return RecommendationResponse(
             query=req.query,
-            total_results=0,
-            latency_ms=round((time.time() - start_time) * 1000, 2),
-            recommendations=[]
+            total_results=len(formatted_recommendations),
+            latency_ms=elapsed_ms,
+            recommendations=formatted_recommendations
         )
-
-    # Stage 2: Neural Cross-Encoder Reranking
-    if req.rerank:
-        final_books = reranker.rerank(req.query, candidates, top_k=req.top_k)
-    else:
-        final_books = candidates[:req.top_k]
-
-    # Sort recommendations by highest rating first (descending)
-    final_books = sorted(
-        final_books,
-        key=lambda b: float(b.get('average_rating', 0.0) if b.get('average_rating') is not None else 0.0),
-        reverse=True
-    )
-
-    # Stage 3: Attach Explainable AI Rationale
-    explained_books = explainer.attach_explanations(req.query, final_books)
-
-    elapsed_ms = round((time.time() - start_time) * 1000, 2)
-
-    # Format response
-    formatted_recommendations = [
-        BookResponse(
-            book_id=b.get('book_id'),
-            title=b.get('title', 'Unknown Title'),
-            authors=b.get('authors', 'Unknown Author'),
-            genres=b.get('genres', 'Fiction'),
-            average_rating=float(b.get('average_rating', 4.0)),
-            description=synopsis_enricher.get_synopsis(b),
-            image_url=b.get('image_url'),
-            ai_explanation=b.get('ai_explanation')
-        )
-        for b in explained_books
-    ]
-
-    return RecommendationResponse(
-        query=req.query,
-        total_results=len(formatted_recommendations),
-        latency_ms=elapsed_ms,
-        recommendations=formatted_recommendations
-    )
+    except Exception as e:
+        import traceback
+        print("❌ Error in recommendation pipeline:")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Recommendation engine error: {str(e)}")
 
 @app.get("/api/authors/popular")
 def get_popular_authors(q: Optional[str] = None, limit: int = 80):

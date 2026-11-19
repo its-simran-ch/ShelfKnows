@@ -10,9 +10,10 @@ class VectorSearchEngine:
         self.collection_name = collection_name
         self.model_name = "all-MiniLM-L6-v2"
         
-        print(f"Initializing Embedding Model ('{self.model_name}')...")
+        print(f"Initializing Embedding Model ('{self.model_name}') on CPU...")
         self.embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=self.model_name
+            model_name=self.model_name,
+            device="cpu"
         )
         
         # Initialize persistent local ChromaDB vector store

@@ -9,8 +9,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 class NeuralReranker:
     def __init__(self, model_name="cross-encoder/ms-marco-MiniLM-L-6-v2"):
         self.model_name = model_name
-        print(f"Loading Cross-Encoder model ('{self.model_name}')...")
-        self.model = CrossEncoder(self.model_name)
+        print(f"Loading Cross-Encoder model ('{self.model_name}') on CPU...")
+        self.model = CrossEncoder(self.model_name, device="cpu")
         print("Cross-Encoder loaded successfully.")
 
     def rerank(self, query, candidates, top_k=10):
