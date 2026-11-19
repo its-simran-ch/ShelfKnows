@@ -3,7 +3,8 @@ import homeVideo from '../../video/home.mp4'
 import { articlesData } from './data/articles'
 import { supabase } from './lib/supabase'
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://simran09-shelfknows-api.hf.space').replace(/\/+$/, '')
+// In production on Vercel, use same-origin proxy rewrite via vercel.json to completely eliminate CORS preflight issues
+const API_BASE_URL = import.meta.env.DEV ? (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/+$/, '') : ''
 
 const COMMUNITY_GENRES = [
   'Fiction & Drama',

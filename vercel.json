@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://simran09-shelfknows-api.hf.space/api/:path*"
+    },
+    {
+      "source": "/health",
+      "destination": "https://simran09-shelfknows-api.hf.space/health"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
