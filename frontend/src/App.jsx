@@ -3,7 +3,7 @@ import homeVideo from '../../video/home.mp4'
 import { articlesData } from './data/articles'
 import { supabase } from './lib/supabase'
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/+$/, '')
+const API_BASE_URL = (import.meta.env.VITE_API_URL || 'https://simran09-shelfknows-api.hf.space').replace(/\/+$/, '')
 
 const COMMUNITY_GENRES = [
   'Fiction & Drama',
@@ -1494,7 +1494,7 @@ function App() {
       setBooks(sortedRecommendations)
       setLatency(data.latency_ms)
     } catch (err) {
-      setError("Unable to connect to ShelfKnows Backend. Ensure uvicorn is running on port 8000.")
+      setError("Unable to connect to ShelfKnows AI Engine. Please check your connection or try again in a moment.")
       console.error(err)
     } finally {
       setLoading(false)
