@@ -4064,13 +4064,19 @@ function App() {
                     </div>
 
                     {/* Reader's Thoughts */}
-                    <div style={{ marginTop: '1.2rem', marginBottom: '1rem' }}>
-                      <div className="community-section-label">A few words on this read</div>
+                    <div style={{ marginTop: '1.4rem', marginBottom: '1.4rem', textAlign: 'center', padding: '0.2rem 0.5rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0.85rem' }}>
+                        <span className="quote-badge-pill" style={{ marginBottom: 0, padding: '0.35rem 0.95rem', fontSize: '0.68rem', letterSpacing: '0.12em' }}>
+                          A Few Words on This Read
+                        </span>
+                      </div>
                       <p style={{
-                        fontSize: '0.94rem',
-                        lineHeight: 1.65,
+                        fontSize: '0.96rem',
+                        lineHeight: 1.72,
                         color: 'var(--text-dark)',
-                        margin: '0'
+                        margin: '0 auto',
+                        maxWidth: '100%',
+                        textAlign: 'center'
                       }}>
                         {post.why_loved}
                       </p>
