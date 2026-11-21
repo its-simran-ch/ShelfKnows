@@ -4397,9 +4397,9 @@ function App() {
       {/* 8. Multi-Column Luxury Footer */}
       <footer className="footer-atelier">
         <div className="footer-top-grid">
-          <div className="footer-brand">
-            <h4 className="footer-heading">ShelfKnows</h4>
-            <p style={{ fontSize: '0.88rem', lineHeight: 1.75, maxWidth: '420px', color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
+          <div className="footer-brand" style={{ maxWidth: '380px' }}>
+            <h4>ShelfKnows</h4>
+            <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               Step into an intelligent library crafted for lovers of deep reading. Tell us what you love or how you feel, and let ShelfKnows uncover the stories meant for you.
             </p>
             <div style={{ marginTop: '0.85rem', fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.75)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
@@ -4418,7 +4418,7 @@ function App() {
           </div>
 
           <div className="footer-col footer-col-center">
-            <h4 className="footer-heading">Explore</h4>
+            <h5>Explore</h5>
             <ul className="footer-links-list">
               <li><button onClick={() => navigateTo('home')}>Home</button></li>
               <li><button onClick={() => navigateTo('genres')}>Browse All Genres</button></li>
@@ -4427,10 +4427,17 @@ function App() {
             </ul>
           </div>
 
-          <div className="footer-brand" style={{ maxWidth: '400px' }}>
-            <h4 className="footer-heading">
+          <div className="footer-brand" style={{ maxWidth: '380px', justifySelf: 'end' }}>
+            <h5 style={{
+              fontSize: '0.88rem',
+              fontWeight: 800,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: 'var(--gold-accent)',
+              margin: '0 0 1rem 0'
+            }}>
               The Reader Community
-            </h4>
+            </h5>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               A warm, quiet corner where book lovers leave behind the stories that touched their lives, share favorite lines, and connect over thoughtful reads.
             </p>
