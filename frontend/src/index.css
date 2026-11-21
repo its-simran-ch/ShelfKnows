@@ -1854,7 +1854,7 @@ body {
   background: var(--forest-darker);
   color: #C5B8A5;
   border-top: 1px solid rgba(197, 184, 165, 0.15);
-  padding: 5rem 0 2.8rem 0;
+  padding: 5rem 2.5rem 2.5rem 2.5rem;
   position: relative;
   z-index: 10;
 }
@@ -1862,18 +1862,10 @@ body {
 .footer-top-grid {
   max-width: 1250px;
   margin: 0 auto;
-  padding: 0 2rem 3.5rem 2rem;
   display: grid;
   grid-template-columns: 1.5fr 1fr 1.5fr;
   gap: 3.8rem;
-}
-
-.footer-full-divider {
-  width: 100%;
-  height: 1px;
-  background: rgba(197, 184, 165, 0.15);
-  margin: 0;
-  border: none;
+  padding-bottom: 2.2rem;
 }
 
 .footer-brand h4 {
@@ -1944,8 +1936,7 @@ body {
 
 .footer-bottom-bar {
   max-width: 1250px;
-  margin: 0 auto;
-  padding: 2.5rem 2rem 0 2rem;
+  margin: 2.4rem auto 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
