@@ -2672,21 +2672,19 @@ function App() {
               </button>
 
               <header className="article-reader-header">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
-                  <span className="article-category-badge">{selectedArticle.category}</span>
-                  {selectedArticle.readTime && (
-                    <>
-                      <span style={{ color: 'var(--text-muted)', fontSize: '0.86rem' }}>•</span>
+                {(selectedArticle.readTime || selectedArticle.date) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.2rem', flexWrap: 'wrap' }}>
+                    {selectedArticle.readTime && (
                       <span style={{ fontSize: '0.86rem', color: 'var(--text-muted)', fontWeight: 600 }}>{selectedArticle.readTime}</span>
-                    </>
-                  )}
-                  {selectedArticle.date && (
-                    <>
+                    )}
+                    {selectedArticle.readTime && selectedArticle.date && (
                       <span style={{ color: 'var(--text-muted)', fontSize: '0.86rem' }}>•</span>
+                    )}
+                    {selectedArticle.date && (
                       <span style={{ fontSize: '0.86rem', color: 'var(--text-muted)' }}>{selectedArticle.date}</span>
-                    </>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
 
                 <h1 className="article-reader-title">{selectedArticle.title}</h1>
 
