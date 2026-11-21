@@ -6,7 +6,7 @@
   ### *Where intuition meets the stories you were looking for.*
 
   [![Live Website](https://img.shields.io/badge/Live%20App-shelf--knows.vercel.app-164E63?style=for-the-badge&logo=vercel&logoColor=white)](https://shelf-knows.vercel.app)
-  [![Hugging Face Spaces](https://img.shields.io/badge/%F0%9F%A4%97%20Space-ZeroGPU%20API-FFD21E?style=for-the-badge&logoColor=black)](https://huggingface.co/spaces/Simran09/shelfknows-api)
+  [![Hugging Face Spaces](https://img.shields.io/badge/Hugging%20Face-ZeroGPU%20API-FFD21E?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/Simran09/shelfknows-api)
   [![React 18](https://img.shields.io/badge/Frontend-React%20%7C%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
   [![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
   [![Supabase](https://img.shields.io/badge/Database-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
@@ -26,7 +26,7 @@
 
 ---
 
-## ☕ A Note from the Creator
+## A Note from the Creator
 
 > *"ShelfKnows started out of my own habit of collecting books and then wondering what to read next. As a reader who loves thoughtful stories and as someone who builds software, I wanted to create something that feels like walking into a cozy, quiet bookstore with a friend who actually listens to the kind of story you crave.*
 >
@@ -40,9 +40,9 @@
 
 ---
 
-## ✨ What Makes ShelfKnows Special?
+## What Makes ShelfKnows Special?
 
-### 1. 🔍 Intuitive Mood & Story Search
+### 1. Intuitive Mood & Story Search
 You don't need to know exact titles or authors. Just speak from the heart:
 * *"I need a comfort read set in a small seaside town where characters heal over shared meals."*
 * *"A philosophical novel that questions our perception of reality without feeling dry."*
@@ -50,24 +50,24 @@ You don't need to know exact titles or authors. Just speak from the heart:
 
 ShelfKnows parses the emotion, thematic weight, and subtle undertones behind your query to retrieve the closest matches across **50,000+ curated Goodreads books**.
 
-### 2. 📖 The Reader Community
+### 2. The Reader Community
 A genuine, warm space where readers share the books that touched their lives:
 * **Authentic Recommendations:** No fake bot reviews or sponsored hype. Only genuine reads shared by fellow readers.
 * **Favorite Lines & Quotes:** Readers highlight the exact passage or quote that stayed in their mind.
 * **Reader Headlines:** Each user can define themselves their way — whether that's *“Student & Poetry Lover”*, *“Software Engineer & Bibliophile”*, or *“Curious Reader”*.
 
-### 3. 🕊️ Your Reading Sanctum (My Shelf)
+### 3. Your Reading Sanctum (My Shelf)
 Your personal library synced across devices with Supabase Auth:
 * **Track Reading Journeys:** Organize books into *Currently Reading*, *Finished*, and *To Read*.
 * **Saved Quotes:** Pin the memorable lines from books that spoke to you.
 * **Reflections & Writing:** Keep personal notes and essays on books you've completed.
 
-### 4. 📰 Editorial Deep Dives & Articles
+### 4. Editorial Deep Dives & Articles
 Handcrafted essays on reading culture, literary history, and the psychology behind why certain stories leave an indelible mark on us.
 
 ---
 
-## 🧠 How It Works Under the Hood
+## How It Works Under the Hood
 
 ShelfKnows uses a **two-stage hybrid recommendation pipeline** to balance lightning-fast retrieval with deep semantic accuracy:
 
@@ -102,7 +102,7 @@ ShelfKnows uses a **two-stage hybrid recommendation pipeline** to balance lightn
 
 ---
 
-## 🛠️ The Tech Stack
+## The Tech Stack
 
 | Layer | Technologies & Tools |
 | :--- | :--- |
@@ -116,7 +116,7 @@ ShelfKnows uses a **two-stage hybrid recommendation pipeline** to balance lightn
 
 ---
 
-## 🚀 Running Locally
+## Running Locally
 
 If you'd like to run ShelfKnows on your own machine:
 
@@ -154,13 +154,13 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 💬 Contributing & Feedback
+## Contributing & Feedback
 
 ShelfKnows is an evolving love letter to reading. If you have book dataset recommendations, suggestions for new moods, or find an issue, feel free to open an issue or submit a pull request!
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Simran Chaudhary**
 * Creator of ShelfKnows
@@ -170,5 +170,5 @@ ShelfKnows is an evolving love letter to reading. If you have book dataset recom
 ---
 
 <div align="center">
-  <sub>Made with gentle curiosity, late-night tea, and a passion for thoughtful reading. 📖✨</sub>
+  <sub>Made with gentle curiosity, late-night tea, and a passion for thoughtful reading.</sub>
 </div>
