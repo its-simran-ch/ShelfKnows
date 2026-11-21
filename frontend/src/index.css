@@ -1977,7 +1977,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.6rem;
+  gap: 1.85rem;
 }
 
 .footer-social-icon-btn {
@@ -1987,10 +1987,10 @@ body {
   justify-content: center;
   background: transparent;
   border: none;
-  padding: 0.25rem;
-  transition: all 0.2s ease;
+  padding: 0.35rem;
+  transition: all 0.22s ease;
   text-decoration: none;
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .footer-social-icon-btn:hover {
