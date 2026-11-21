@@ -1873,7 +1873,7 @@ body {
   font-variation-settings: 'SOFT' 100, 'WONK' 0;
   font-size: 1.7rem;
   font-weight: 800;
-  color: #FFFFFF;
+  color: var(--gold-accent);
   margin-bottom: 0.8rem;
 }
 
