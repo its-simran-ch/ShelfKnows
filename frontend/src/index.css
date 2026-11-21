@@ -1863,7 +1863,7 @@ body {
   max-width: 1250px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1.2fr;
+  grid-template-columns: 1.5fr 1fr 1.5fr;
   gap: 3.8rem;
   padding-bottom: 3.5rem;
   border-bottom: 1px solid rgba(197, 184, 165, 0.15);
@@ -1939,10 +1939,39 @@ body {
   max-width: 1250px;
   margin: 2.2rem auto 0 auto;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  font-size: 0.84rem;
+  color: #8bb3c5;
+}
+
+.footer-social-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footer-social-icon-btn {
+  color: #A3C9D9;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  text-align: center;
-  font-size: 0.82rem;
-  color: #6C94A7;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.footer-social-icon-btn:hover {
+  color: var(--gold-accent);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(200, 169, 126, 0.3);
+  transform: translateY(-2px);
 }
 
 /* --- Modals (Warm Cream Card with Velvet Burgundy Accents) --- */
