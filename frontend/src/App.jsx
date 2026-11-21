@@ -123,12 +123,12 @@ const MALE_AVATAR_SRC = '/Avatar/male_profile.png?v=3'
 const INITIAL_COMMUNITY_POSTS = [
   {
     id: 'post-1',
-    book_title: "Don't Believe Everything You Think",
-    book_author: 'Joseph Nguyen',
-    book_cover: 'https://covers.openlibrary.org/b/id/15158200-M.jpg',
+    book_title: "The Let Them Theory",
+    book_author: 'Mel Robbins',
+    book_cover: 'https://covers.openlibrary.org/b/id/15152033-M.jpg',
     genre: 'Self-Help & Personal Growth',
-    why_loved: "A deeply grounding read on how our suffering doesn't come from external circumstances, but from our compulsive overthinking about them. It reminds you that peace isn't something you create — it's what's left when you stop believing every anxious thought your mind generates.",
-    favorite_quote: 'You are not fundamentally broken. You are not a problem to be fixed, but a human who is meant to be understood.',
+    why_loved: "A deeply liberating reminder that so much of our daily anxiety comes from trying to manage how other people perceive, react, or behave towards us. Two simple words — 'Let Them' — give you permission to stop over-explaining yourself, release the need for control you never had, and reclaim all your energy back for your own peace and growth.",
+    favorite_quote: 'Let them judge. Let them react. Let them doubt you. Let them be wrong about you. Your peace does not depend on their decision.',
     author_name: 'Simran Chaudhary',
     author_role: 'Your Fellow Reader',
     avatar: FEMALE_AVATAR_SRC,
@@ -345,7 +345,7 @@ function App() {
   // 2. The Reader Community State & Discussions
   const [communityPosts, setCommunityPosts] = useState(() => {
     try {
-      const local = localStorage.getItem('shelfknows_community_posts_v8')
+      const local = localStorage.getItem('shelfknows_community_posts_v9')
       if (local) {
         const parsed = JSON.parse(local)
         if (Array.isArray(parsed)) {
@@ -375,11 +375,16 @@ function App() {
             const authorGender = p.gender || initialMatch?.gender || null
             return {
               ...p,
+              book_title: p.id === 'post-1' ? initialMatch.book_title : (p.book_title || initialMatch?.book_title),
+              book_author: p.id === 'post-1' ? initialMatch.book_author : (p.book_author || initialMatch?.book_author),
+              book_cover: p.id === 'post-1' ? initialMatch.book_cover : (initialMatch?.book_cover || p.book_cover || null),
+              why_loved: p.id === 'post-1' ? initialMatch.why_loved : (p.why_loved || initialMatch?.why_loved),
+              favorite_quote: p.id === 'post-1' ? initialMatch.favorite_quote : (p.favorite_quote || initialMatch?.favorite_quote),
+              genre: p.id === 'post-1' ? initialMatch.genre : (p.genre || initialMatch?.genre || 'Self-Help & Personal Growth'),
               author_role: p.id === 'post-1' ? 'Your Fellow Reader' : (p.author_role || initialMatch?.author_role || 'Reader'),
               date: p.id === 'post-1' ? '' : (p.date !== undefined ? p.date : (initialMatch?.date || '')),
               avatar: resolveAvatar(initialMatch?.avatar || p.avatar, authorName, authorGender),
               gender: authorGender || (resolveAvatar(null, authorName, null).includes('male') ? 'male' : 'female'),
-              book_cover: initialMatch?.book_cover || p.book_cover || null,
               liked_by: Array.isArray(p.liked_by) && p.liked_by.length > 0 ? p.liked_by.map((u) => ({
                 ...u,
                 avatar: resolveAvatar(u.avatar, u.name, u.gender)
@@ -394,7 +399,6 @@ function App() {
                 reply_to_id: c?.reply_to_id || null,
                 reply_to_name: c?.reply_to_name || null
               })) : (initialMatch?.comments || []),
-              genre: p.genre || (idx === 0 || idx === 1 ? 'Fiction & Drama' : idx === 2 ? 'Sci-Fi & Fantasy' : 'Other')
             }
           })
         }
@@ -407,7 +411,7 @@ function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('shelfknows_community_posts_v8', JSON.stringify(communityPosts))
+      localStorage.setItem('shelfknows_community_posts_v9', JSON.stringify(communityPosts))
     } catch (e) {
       console.error(e)
     }
