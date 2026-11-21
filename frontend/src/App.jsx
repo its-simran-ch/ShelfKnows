@@ -515,6 +515,12 @@ function App() {
   }
 
   const getAuthorAvatar = (name, explicitAvatar, explicitGender) => {
+    const aName = (name || '').trim().toLowerCase()
+    const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim().toLowerCase()
+    if (aName === activeName || aName === 'you' || aName === 'reader' || (aName.includes('simran') && activeName.includes('simran'))) {
+      return userAvatar === 'male' ? MALE_AVATAR_SRC : FEMALE_AVATAR_SRC
+    }
+
     if (explicitAvatar && typeof explicitAvatar === 'string') {
       if (explicitAvatar.includes('female')) return FEMALE_AVATAR_SRC
       if (explicitAvatar.includes('male')) return MALE_AVATAR_SRC
@@ -522,12 +528,6 @@ function App() {
     }
     if (explicitGender === 'male') return MALE_AVATAR_SRC
     if (explicitGender === 'female') return FEMALE_AVATAR_SRC
-
-    const aName = (name || '').trim().toLowerCase()
-    const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim().toLowerCase()
-    if (aName === activeName || aName === 'you' || aName === 'reader' || (aName.includes('simran') && activeName.includes('simran'))) {
-      return userAvatar === 'male' ? MALE_AVATAR_SRC : FEMALE_AVATAR_SRC
-    }
 
     const maleList = [
       'kabir', 'rohan', 'aditya', 'devansh', 'arjun', 'karan', 'rahul', 'vikram',
@@ -2653,7 +2653,22 @@ function App() {
                       </p>
 
                       <div className="article-card-footer">
-                        <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark)' }}>By {article.author}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <img
+                            src={getAuthorAvatar(article.author, article.avatar, article.gender)}
+                            alt={article.author}
+                            style={{
+                              width: '28px',
+                              height: '28px',
+                              borderRadius: '50%',
+                              objectFit: 'cover',
+                              border: '1.5px solid var(--border-warm)',
+                              background: 'var(--bg-surface-soft)',
+                              flexShrink: 0
+                            }}
+                          />
+                          <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark)' }}>By {article.author}</span>
+                        </div>
                         <span className="article-read-btn">Read Full Article →</span>
                       </div>
                     </div>
@@ -2689,9 +2704,20 @@ function App() {
                 <h1 className="article-reader-title">{selectedArticle.title}</h1>
 
                 <div className="article-reader-author-strip">
-                  <div className="author-avatar-badge" style={{ width: '44px', height: '44px', fontSize: '0.95rem' }}>
-                    {getAuthorInitials(selectedArticle.author)}
-                  </div>
+                  <img
+                    src={getAuthorAvatar(selectedArticle.author, selectedArticle.avatar, selectedArticle.gender)}
+                    alt={selectedArticle.author}
+                    style={{
+                      width: '46px',
+                      height: '46px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      border: '2px solid var(--border-warm)',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      background: 'var(--bg-surface-soft)',
+                      flexShrink: 0
+                    }}
+                  />
                   <div>
                     <div style={{ fontWeight: 800, color: 'var(--forest-deep)', fontSize: '0.98rem' }}>{selectedArticle.author}</div>
                     <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{selectedArticle.role}</div>
