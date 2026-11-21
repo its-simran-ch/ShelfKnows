@@ -544,6 +544,19 @@ function App() {
     return getAuthorAvatar(comment?.author_name || comment?.author, comment?.avatar, comment?.gender)
   }
 
+  const getAuthorHeadline = (authorName, articleRole) => {
+    const aName = (authorName || '').trim().toLowerCase()
+    const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim().toLowerCase()
+    if (aName === activeName || aName === 'you' || aName === 'reader' || (aName.includes('simran') && activeName.includes('simran'))) {
+      const userHl = profile?.headline || user?.user_metadata?.headline
+      if (userHl && userHl.trim() && userHl.trim() !== 'Reader & Story Explorer') {
+        return userHl.trim()
+      }
+      return articleRole || 'Your Fellow Reader'
+    }
+    return articleRole || 'Your Fellow Reader'
+  }
+
   const handleAddComment = (postId, e) => {
     e.preventDefault()
     const text = (commentInputs[postId] || '').trim()
@@ -2720,7 +2733,7 @@ function App() {
                   />
                   <div>
                     <div style={{ fontWeight: 800, color: 'var(--forest-deep)', fontSize: '0.98rem' }}>{selectedArticle.author}</div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{selectedArticle.role}</div>
+                    <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{getAuthorHeadline(selectedArticle.author, selectedArticle.role)}</div>
                   </div>
                 </div>
               </header>
