@@ -4442,7 +4442,7 @@ function App() {
               A warm, quiet corner where book lovers leave behind the stories that touched their lives, share favorite lines, and connect over thoughtful reads.
             </p>
             <div style={{ marginTop: '0.85rem', fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.75)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-              <span>Join the conversation</span>
+              <span>Visit the</span>
               <button
                 className="footer-about-link-btn"
                 onClick={() => {
@@ -4450,7 +4450,7 @@ function App() {
                   window.scrollTo({ top: 0, behavior: 'smooth' })
                 }}
               >
-                <span>Visit the Community</span>
+                <span>Community</span>
                 <span style={{ fontSize: '0.85rem' }}>→</span>
               </button>
             </div>
