@@ -4457,6 +4457,8 @@ function App() {
           </div>
         </div>
 
+        <div className="footer-full-divider" />
+
         <div className="footer-bottom-bar">
           <div className="footer-social-icons">
             <a
