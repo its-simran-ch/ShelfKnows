@@ -4398,7 +4398,7 @@ function App() {
       <footer className="footer-atelier">
         <div className="footer-top-grid">
           <div className="footer-brand">
-            <h4>ShelfKnows</h4>
+            <h4 className="footer-heading">ShelfKnows</h4>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, maxWidth: '420px', color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               Step into an intelligent library crafted for lovers of deep reading. Tell us what you love or how you feel, and let ShelfKnows uncover the stories meant for you.
             </p>
@@ -4417,8 +4417,8 @@ function App() {
             </div>
           </div>
 
-          <div className="footer-col">
-            <h5>Explore</h5>
+          <div className="footer-col footer-col-center">
+            <h4 className="footer-heading">Explore</h4>
             <ul className="footer-links-list">
               <li><button onClick={() => navigateTo('home')}>Home</button></li>
               <li><button onClick={() => navigateTo('genres')}>Browse All Genres</button></li>
@@ -4428,16 +4428,9 @@ function App() {
           </div>
 
           <div className="footer-brand" style={{ maxWidth: '400px' }}>
-            <h5 style={{
-              fontSize: '0.88rem',
-              fontWeight: 800,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--gold-accent)',
-              margin: '0 0 1rem 0'
-            }}>
+            <h4 className="footer-heading">
               The Reader Community
-            </h5>
+            </h4>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               A warm, quiet corner where book lovers leave behind the stories that touched their lives, share favorite lines, and connect over thoughtful reads.
             </p>
@@ -4456,8 +4449,6 @@ function App() {
             </div>
           </div>
         </div>
-
-        <div className="footer-full-divider" />
 
         <div className="footer-bottom-bar">
           <div className="footer-social-icons">
