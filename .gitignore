@@ -1,14 +1,14 @@
-# Python virtual environment (1.2 GB - isko upload nahi karna)
+# Python virtual environment
 venv/
 __pycache__/
 *.pyc
 
-# Node modules
+# Node modules & build outputs
 node_modules/
 frontend/node_modules/
 frontend/dist/
 
-# Secret API Keys (Supabase keys ko safe rakhne ke liye)
+# Environment variables & secrets
 .env
 .env.*
 !.env.example
@@ -16,12 +16,12 @@ frontend/.env
 frontend/.env.*
 !frontend/.env.example
 
-# System files
+# Operating System files
 .DS_Store
 
 # Heavy database cache
 data/chroma_db/
 
-# Personal documentation & Substack drafts (MacBook par safe rahenge, GitHub par nahi)
+# Local drafts and documentation
 docs/
 substack_articles/
