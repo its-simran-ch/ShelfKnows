@@ -178,6 +178,25 @@ function App() {
   const [resetPasswordLoading, setResetPasswordLoading] = useState(false)
   const [resetPasswordError, setResetPasswordError] = useState(null)
   const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false)
+  const [knownEmails, setKnownEmails] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('shelfknows_known_emails') || '[]')
+      return Array.isArray(stored) ? stored : []
+    } catch {
+      return []
+    }
+  })
+
+  const addKnownEmail = (email) => {
+    if (!email) return
+    const emailLower = email.trim().toLowerCase()
+    setKnownEmails((prev) => {
+      if (prev.includes(emailLower)) return prev
+      const updated = [...prev, emailLower]
+      try { localStorage.setItem('shelfknows_known_emails', JSON.stringify(updated)) } catch { }
+      return updated
+    })
+  }
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [showEditProfileModal, setShowEditProfileModal] = useState(false)
   const [editName, setEditName] = useState('')
@@ -1056,6 +1075,9 @@ function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user)
+        if (session.user.email) {
+          addKnownEmail(session.user.email)
+        }
         const metaGender = session.user.user_metadata?.avatar_gender
         if (metaGender) {
           setUserAvatar(metaGender)
@@ -1077,6 +1099,9 @@ function App() {
       }
       if (session?.user) {
         setUser(session.user)
+        if (session.user.email) {
+          addKnownEmail(session.user.email)
+        }
         const metaGender = session.user.user_metadata?.avatar_gender
         if (metaGender) {
           setUserAvatar(metaGender)
@@ -1123,11 +1148,12 @@ function App() {
     setAuthLoading(true)
     setAuthError(null)
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: authEmail,
         password: authPassword
       })
       if (error) throw error
+      addKnownEmail(authEmail)
       setShowAuthModal(false)
       setAuthEmail('')
       setAuthPassword('')
@@ -1161,6 +1187,7 @@ function App() {
         }
       })
       if (error) throw error
+      addKnownEmail(authEmail)
       setUserAvatar(authGender)
       try { localStorage.setItem('shelfknows_avatar_gender', authGender) } catch { }
       if (data?.session) {
@@ -1173,7 +1200,13 @@ function App() {
         setAuthSuccessMsg('Account created successfully! You can now sign in.')
       }
     } catch (err) {
-      setAuthError(err.message || 'Failed to create account.')
+      const msg = err.message || ''
+      if (msg.toLowerCase().includes('already registered') || msg.toLowerCase().includes('already exists') || err.code === 'user_already_exists') {
+        addKnownEmail(authEmail)
+        setAuthError('User already registered')
+      } else {
+        setAuthError(msg || 'Failed to create account.')
+      }
     } finally {
       setAuthLoading(false)
     }
@@ -4831,7 +4864,7 @@ function App() {
                 marginBottom: '1.2rem',
                 lineHeight: 1.55
               }}>
-                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: authMode === 'signin' ? '0.45rem' : '0' }}>
+                <div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: authMode === 'signin' || (authMode === 'signup' && (authError.toLowerCase().includes('already registered') || authError.toLowerCase().includes('already exists'))) ? '0.45rem' : '0' }}>
                   <span>⚠️</span>
                   <span>{authError}</span>
                 </div>
@@ -4884,6 +4917,54 @@ function App() {
                     </div>
                   </div>
                 )}
+                {authMode === 'signup' && (authError.toLowerCase().includes('already registered') || authError.toLowerCase().includes('already exists')) && (
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-dark)', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.35rem', marginTop: '0.35rem' }}>
+                    <div>
+                      Already registered with this email?{' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('signin')
+                          setAuthError(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontWeight: 800,
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          fontSize: '0.82rem'
+                        }}
+                      >
+                        Sign In here ➔
+                      </button>
+                    </div>
+                    <div>
+                      Forgot your password?{' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('forgot')
+                          setAuthError(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontWeight: 800,
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          fontSize: '0.82rem'
+                        }}
+                      >
+                        Reset Password ➔
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             {authSuccessMsg && (
@@ -4903,6 +4984,116 @@ function App() {
 
             {/* Form */}
             <form onSubmit={authMode === 'signin' ? handleSignIn : authMode === 'signup' ? handleSignUp : handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="reader@shelfknows.com"
+                  value={authEmail}
+                  onChange={(e) => setAuthEmail(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '10px',
+                    border: '1.2px solid var(--border-warm)',
+                    background: 'var(--bg-surface)',
+                    fontSize: '0.92rem',
+                    fontFamily: 'inherit',
+                    boxSizing: 'border-box'
+                  }}
+                />
+                {authMode === 'signup' && authEmail.trim() && knownEmails.includes(authEmail.trim().toLowerCase()) && (
+                  <div style={{
+                    marginTop: '0.45rem',
+                    padding: '0.55rem 0.85rem',
+                    background: '#FEF3C7',
+                    border: '1.2px solid #FCD34D',
+                    borderRadius: '8px',
+                    fontSize: '0.82rem',
+                    color: '#92400E',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.6rem',
+                    lineHeight: 1.4
+                  }}>
+                    <span>⚠️ An account with this email already exists!</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('signin')
+                        setAuthError(null)
+                      }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#78350F',
+                        fontWeight: 800,
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        fontSize: '0.82rem',
+                        padding: 0,
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      Sign In instead ➔
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {authMode !== 'forgot' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Password
+                    </label>
+                    {authMode === 'signin' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('forgot')
+                          setAuthError(null)
+                          setAuthSuccessMsg(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          padding: 0
+                        }}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      border: '1.2px solid var(--border-warm)',
+                      background: 'var(--bg-surface)',
+                      fontSize: '0.92rem',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Reader Profile Details (Only on Sign Up) */}
               {authMode === 'signup' && (
                 <>
                   <div>
@@ -4994,77 +5185,6 @@ function App() {
                     />
                   </div>
                 </>
-              )}
-
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="reader@shelfknows.com"
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '10px',
-                    border: '1.2px solid var(--border-warm)',
-                    background: 'var(--bg-surface)',
-                    fontSize: '0.92rem',
-                    fontFamily: 'inherit',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              {authMode !== 'forgot' && (
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
-                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                      Password
-                    </label>
-                    {authMode === 'signin' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setAuthMode('forgot')
-                          setAuthError(null)
-                          setAuthSuccessMsg(null)
-                        }}
-                        style={{
-                          background: 'transparent',
-                          border: 'none',
-                          color: 'var(--forest-deep)',
-                          fontSize: '0.8rem',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          padding: 0
-                        }}
-                      >
-                        Forgot password?
-                      </button>
-                    )}
-                  </div>
-                  <input
-                    type="password"
-                    required
-                    placeholder="••••••••"
-                    value={authPassword}
-                    onChange={(e) => setAuthPassword(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: '10px',
-                      border: '1.2px solid var(--border-warm)',
-                      background: 'var(--bg-surface)',
-                      fontSize: '0.92rem',
-                      fontFamily: 'inherit',
-                      boxSizing: 'border-box'
-                    }}
-                  />
-                </div>
               )}
 
               <button
