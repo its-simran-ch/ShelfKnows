@@ -1359,7 +1359,7 @@ function App() {
   const toggleSaveBook = async (book, e) => {
     if (e) e.stopPropagation()
 
-    // 1. Agar user logged in nahi hai, toh Sign In popup khulega
+    // 1. If user is not logged in, prompt sign in modal
     if (!user) {
       setAuthMode('signin')
       setAuthError('Please sign in or create an account to save books to your personal shelf.')
@@ -1370,7 +1370,7 @@ function App() {
     const exists = savedBooks.some((b) => b.title === book.title)
 
     if (exists) {
-      // Turant UI update (optimistic)
+      // Instant optimistic UI update
       setSavedBooks((prev) => prev.filter((b) => b.title !== book.title))
       try {
         await supabase
@@ -1382,7 +1382,7 @@ function App() {
         console.error('Failed to remove book from Supabase:', err)
       }
     } else {
-      // Turant UI update (optimistic)
+      // Instant optimistic UI update
       setSavedBooks((prev) => [...prev, book])
       try {
         await supabase.from('user_saved_books').insert([
