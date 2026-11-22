@@ -172,6 +172,12 @@ function App() {
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState(null)
   const [authSuccessMsg, setAuthSuccessMsg] = useState(null)
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [resetPasswordLoading, setResetPasswordLoading] = useState(false)
+  const [resetPasswordError, setResetPasswordError] = useState(null)
+  const [resetPasswordSuccess, setResetPasswordSuccess] = useState(false)
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [showEditProfileModal, setShowEditProfileModal] = useState(false)
   const [editName, setEditName] = useState('')
@@ -1060,7 +1066,15 @@ function App() {
       }
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Check if recovery link was clicked
+    if (window.location.hash && (window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token'))) {
+      setShowResetPasswordModal(true)
+    }
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'PASSWORD_RECOVERY') {
+        setShowResetPasswordModal(true)
+      }
       if (session?.user) {
         setUser(session.user)
         const metaGender = session.user.user_metadata?.avatar_gender
@@ -1162,6 +1176,57 @@ function App() {
       setAuthError(err.message || 'Failed to create account.')
     } finally {
       setAuthLoading(false)
+    }
+  }
+
+  const handleForgotPassword = async (e) => {
+    if (e) e.preventDefault()
+    if (!authEmail.trim()) {
+      setAuthError('Please enter your registered email address.')
+      return
+    }
+    setAuthLoading(true)
+    setAuthError(null)
+    setAuthSuccessMsg(null)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(authEmail.trim(), {
+        redirectTo: window.location.origin
+      })
+      if (error) throw error
+      setAuthSuccessMsg(`Password reset link sent to ${authEmail.trim()}! Please check your email inbox (and spam folder).`)
+    } catch (err) {
+      setAuthError(err.message || 'Failed to send password reset link. Please try again.')
+    } finally {
+      setAuthLoading(false)
+    }
+  }
+
+  const handleUpdatePassword = async (e) => {
+    if (e) e.preventDefault()
+    if (newPassword.length < 6) {
+      setResetPasswordError('Password must be at least 6 characters long.')
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      setResetPasswordError('Passwords do not match. Please re-enter.')
+      return
+    }
+    setResetPasswordLoading(true)
+    setResetPasswordError(null)
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
+      if (error) throw error
+      setResetPasswordSuccess(true)
+      setTimeout(() => {
+        setShowResetPasswordModal(false)
+        setResetPasswordSuccess(false)
+        setNewPassword('')
+        setConfirmPassword('')
+      }, 2500)
+    } catch (err) {
+      setResetPasswordError(err.message || 'Failed to update password. Please try again.')
+    } finally {
+      setResetPasswordLoading(false)
     }
   }
 
@@ -4673,7 +4738,7 @@ function App() {
         </div>
       )}
 
-      {/* --- MODAL 3: Auth Modal (Login / Sign Up) --- */}
+      {/* --- MODAL 3: Auth Modal (Login / Sign Up / Forgot Password) --- */}
       {showAuthModal && (
         <div
           className="modal-backdrop-atelier"
@@ -4683,12 +4748,14 @@ function App() {
             <div className="modal-header-atelier" style={{ marginBottom: '1.5rem' }}>
               <div>
                 <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.65rem', color: 'var(--forest-deep)', margin: 0 }}>
-                  {authMode === 'signin' ? 'Welcome Back' : 'Join ShelfKnows'}
+                  {authMode === 'signin' ? 'Welcome Back' : authMode === 'signup' ? 'Join ShelfKnows' : 'Reset Password'}
                 </h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.3rem 0 0 0' }}>
                   {authMode === 'signin'
                     ? 'Sign in to access your synced reading shelf.'
-                    : 'Create your personal corner for thoughtful reading.'}
+                    : authMode === 'signup'
+                    ? 'Create your personal corner for thoughtful reading.'
+                    : 'Enter your registered email address to receive a password reset link.'}
                 </p>
               </div>
               <button
@@ -4703,52 +4770,54 @@ function App() {
               </button>
             </div>
 
-            {/* Switch Tabs: Sign In vs Sign Up */}
-            <div style={{
-              display: 'flex',
-              background: 'var(--bg-surface-soft)',
-              padding: '0.3rem',
-              borderRadius: '9999px',
-              marginBottom: '1.6rem',
-              border: '1px solid var(--border-warm)'
-            }}>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('signin'); setAuthError(null); }}
-                style={{
-                  flex: 1,
-                  padding: '0.55rem',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  background: authMode === 'signin' ? 'var(--forest-deep)' : 'transparent',
-                  color: authMode === 'signin' ? '#FFFFFF' : 'var(--text-dark)',
-                  fontSize: '0.86rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => { setAuthMode('signup'); setAuthError(null); }}
-                style={{
-                  flex: 1,
-                  padding: '0.55rem',
-                  border: 'none',
-                  borderRadius: '9999px',
-                  background: authMode === 'signup' ? 'var(--forest-deep)' : 'transparent',
-                  color: authMode === 'signup' ? '#FFFFFF' : 'var(--text-dark)',
-                  fontSize: '0.86rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                Create Account
-              </button>
-            </div>
+            {/* Switch Tabs: Sign In vs Sign Up (hidden in forgot mode) */}
+            {authMode !== 'forgot' && (
+              <div style={{
+                display: 'flex',
+                background: 'var(--bg-surface-soft)',
+                padding: '0.3rem',
+                borderRadius: '9999px',
+                marginBottom: '1.6rem',
+                border: '1px solid var(--border-warm)'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('signin'); setAuthError(null); setAuthSuccessMsg(null); }}
+                  style={{
+                    flex: 1,
+                    padding: '0.55rem',
+                    border: 'none',
+                    borderRadius: '9999px',
+                    background: authMode === 'signin' ? 'var(--forest-deep)' : 'transparent',
+                    color: authMode === 'signin' ? '#FFFFFF' : 'var(--text-dark)',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setAuthMode('signup'); setAuthError(null); setAuthSuccessMsg(null); }}
+                  style={{
+                    flex: 1,
+                    padding: '0.55rem',
+                    border: 'none',
+                    borderRadius: '9999px',
+                    background: authMode === 'signup' ? 'var(--forest-deep)' : 'transparent',
+                    color: authMode === 'signup' ? '#FFFFFF' : 'var(--text-dark)',
+                    fontSize: '0.86rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  Create Account
+                </button>
+              </div>
+            )}
 
             {/* Error & Success Messages */}
             {authError && (
@@ -4767,27 +4836,52 @@ function App() {
                   <span>{authError}</span>
                 </div>
                 {authMode === 'signin' && (
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-dark)', paddingLeft: '1.5rem' }}>
-                    Haven't created an account yet?{' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAuthMode('signup')
-                        setAuthError(null)
-                      }}
-                      style={{
-                        background: 'transparent',
-                        border: 'none',
-                        color: 'var(--forest-deep)',
-                        fontWeight: 800,
-                        textDecoration: 'underline',
-                        cursor: 'pointer',
-                        padding: 0,
-                        fontSize: '0.82rem'
-                      }}
-                    >
-                      Click here to Create Account ➔
-                    </button>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-dark)', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.3rem', marginTop: '0.35rem' }}>
+                    <div>
+                      Forgot your password?{' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('forgot')
+                          setAuthError(null)
+                          setAuthSuccessMsg(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontWeight: 800,
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          fontSize: '0.82rem'
+                        }}
+                      >
+                        Reset Password ➔
+                      </button>
+                    </div>
+                    <div>
+                      Haven't created an account yet?{' '}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('signup')
+                          setAuthError(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontWeight: 800,
+                          textDecoration: 'underline',
+                          cursor: 'pointer',
+                          padding: 0,
+                          fontSize: '0.82rem'
+                        }}
+                      >
+                        Click here to Create Account ➔
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -4808,7 +4902,7 @@ function App() {
             )}
 
             {/* Form */}
-            <form onSubmit={authMode === 'signin' ? handleSignIn : handleSignUp} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+            <form onSubmit={authMode === 'signin' ? handleSignIn : authMode === 'signup' ? handleSignUp : handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
               {authMode === 'signup' && (
                 <>
                   <div>
@@ -4925,28 +5019,53 @@ function App() {
                 />
               </div>
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '10px',
-                    border: '1.2px solid var(--border-warm)',
-                    background: 'var(--bg-surface)',
-                    fontSize: '0.92rem',
-                    fontFamily: 'inherit',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
+              {authMode !== 'forgot' && (
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.35rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Password
+                    </label>
+                    {authMode === 'signin' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('forgot')
+                          setAuthError(null)
+                          setAuthSuccessMsg(null)
+                        }}
+                        style={{
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--forest-deep)',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          padding: 0
+                        }}
+                      >
+                        Forgot password?
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    value={authPassword}
+                    onChange={(e) => setAuthPassword(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      border: '1.2px solid var(--border-warm)',
+                      background: 'var(--bg-surface)',
+                      fontSize: '0.92rem',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+              )}
 
               <button
                 type="submit"
@@ -4960,18 +5079,29 @@ function App() {
                   opacity: authLoading ? 0.7 : 1
                 }}
               >
-                {authLoading ? 'Please wait...' : (authMode === 'signin' ? 'Sign In to ShelfKnows' : 'Create My Account')}
+                {authLoading ? 'Please wait...' : (authMode === 'signin' ? 'Sign In to ShelfKnows' : authMode === 'signup' ? 'Create My Account' : 'Send Reset Link')}
               </button>
             </form>
 
             {/* Bottom Switcher Link */}
             <div style={{ textAlign: 'center', marginTop: '1.3rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-              {authMode === 'signin' ? (
+              {authMode === 'forgot' ? (
+                <span>
+                  Remember your password?{' '}
+                  <button
+                    type="button"
+                    onClick={() => { setAuthMode('signin'); setAuthError(null); setAuthSuccessMsg(null); }}
+                    style={{ background: 'transparent', border: 'none', color: 'var(--forest-deep)', fontWeight: 800, cursor: 'pointer', padding: 0 }}
+                  >
+                    Sign In here ➔
+                  </button>
+                </span>
+              ) : authMode === 'signin' ? (
                 <span>
                   New to ShelfKnows?{' '}
                   <button
                     type="button"
-                    onClick={() => { setAuthMode('signup'); setAuthError(null); }}
+                    onClick={() => { setAuthMode('signup'); setAuthError(null); setAuthSuccessMsg(null); }}
                     style={{ background: 'transparent', border: 'none', color: 'var(--forest-deep)', fontWeight: 800, cursor: 'pointer', padding: 0 }}
                   >
                     Create a free account
@@ -4982,7 +5112,7 @@ function App() {
                   Already have an account?{' '}
                   <button
                     type="button"
-                    onClick={() => { setAuthMode('signin'); setAuthError(null); }}
+                    onClick={() => { setAuthMode('signin'); setAuthError(null); setAuthSuccessMsg(null); }}
                     style={{ background: 'transparent', border: 'none', color: 'var(--forest-deep)', fontWeight: 800, cursor: 'pointer', padding: 0 }}
                   >
                     Sign In here
@@ -4990,6 +5120,136 @@ function App() {
                 </span>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- MODAL: Update / Reset New Password --- */}
+      {showResetPasswordModal && (
+        <div
+          className="modal-backdrop-atelier"
+          onClick={(e) => { if (e.target === e.currentTarget && !resetPasswordSuccess) setShowResetPasswordModal(false) }}
+        >
+          <div
+            className="modal-card-atelier"
+            style={{ maxWidth: '440px', padding: '2.2rem 2rem' }}
+          >
+            <div className="modal-header-atelier" style={{ marginBottom: '1.5rem' }}>
+              <div>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.65rem', color: 'var(--forest-deep)', margin: 0 }}>
+                  Set a New Password
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '0.3rem 0 0 0' }}>
+                  Please enter a new secure password for your ShelfKnows account.
+                </p>
+              </div>
+              {!resetPasswordSuccess && (
+                <button
+                  className="modal-close-round"
+                  onClick={() => setShowResetPasswordModal(false)}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {resetPasswordError && (
+              <div style={{
+                background: '#FEF2F2',
+                border: '1.2px solid #FCA5A5',
+                color: '#991B1B',
+                padding: '0.75rem 1rem',
+                borderRadius: '10px',
+                fontSize: '0.86rem',
+                marginBottom: '1.2rem'
+              }}>
+                ⚠️ {resetPasswordError}
+              </div>
+            )}
+
+            {resetPasswordSuccess ? (
+              <div style={{
+                background: '#D1FAE5',
+                border: '1px solid #6EE7B7',
+                color: '#065F46',
+                padding: '1.1rem',
+                borderRadius: '12px',
+                fontSize: '0.9rem',
+                textAlign: 'center',
+                lineHeight: 1.55
+              }}>
+                <div style={{ fontSize: '1.5rem', marginBottom: '0.3rem' }}>✓</div>
+                <b>Password updated successfully!</b>
+                <p style={{ margin: '0.4rem 0 0 0', fontSize: '0.82rem', color: '#047857' }}>
+                  You are now securely signed in with your new password.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleUpdatePassword} style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    placeholder="At least 6 characters"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      border: '1.2px solid var(--border-warm)',
+                      background: 'var(--bg-surface)',
+                      fontSize: '0.92rem',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-dark)', marginBottom: '0.35rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    placeholder="Re-enter your new password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem 1rem',
+                      borderRadius: '10px',
+                      border: '1.2px solid var(--border-warm)',
+                      background: 'var(--bg-surface)',
+                      fontSize: '0.92rem',
+                      fontFamily: 'inherit',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={resetPasswordLoading}
+                  className="btn-search-atelier"
+                  style={{
+                    width: '100%',
+                    padding: '0.8rem',
+                    fontSize: '0.92rem',
+                    marginTop: '0.4rem',
+                    opacity: resetPasswordLoading ? 0.7 : 1
+                  }}
+                >
+                  {resetPasswordLoading ? 'Updating password...' : 'Update Password'}
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}
