@@ -21,3 +21,7 @@ frontend/.env.*
 
 # Heavy database cache
 data/chroma_db/
+
+# Personal documentation & Substack drafts (MacBook par safe rahenge, GitHub par nahi)
+docs/
+substack_articles/
