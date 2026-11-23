@@ -1072,6 +1072,19 @@ function App() {
   }
 
   useEffect(() => {
+    // Detect if current URL indicates an incoming auth callback or password recovery link
+    const searchParams = new URLSearchParams(window.location.search)
+    const hash = window.location.hash || ''
+    const isRecoveryUrl =
+      hash.includes('type=recovery') ||
+      hash.includes('access_token') ||
+      searchParams.get('type') === 'recovery' ||
+      searchParams.has('code')
+
+    if (isRecoveryUrl) {
+      setShowResetPasswordModal(true)
+    }
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user)
@@ -1085,16 +1098,18 @@ function App() {
         }
         fetchProfile(session.user.id)
         fetchUserSavedBooks(session.user.id)
+
+        // Check AMR for recovery session
+        const isRecoveryAmr = session.user.amr?.some((item) => item.method === 'recovery')
+        if (isRecoveryAmr) {
+          setShowResetPasswordModal(true)
+        }
       }
     })
 
-    // Check if recovery link was clicked
-    if (window.location.hash && (window.location.hash.includes('type=recovery') || window.location.hash.includes('access_token'))) {
-      setShowResetPasswordModal(true)
-    }
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'PASSWORD_RECOVERY') {
+      const isRecoveryAmr = session?.user?.amr?.some((item) => item.method === 'recovery')
+      if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && isRecoveryAmr)) {
         setShowResetPasswordModal(true)
       }
       if (session?.user) {
@@ -1250,6 +1265,9 @@ function App() {
       const { error } = await supabase.auth.updateUser({ password: newPassword })
       if (error) throw error
       setResetPasswordSuccess(true)
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname)
+      } catch { }
       setTimeout(() => {
         setShowResetPasswordModal(false)
         setResetPasswordSuccess(false)
@@ -1686,6 +1704,33 @@ function App() {
                     onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                   >
                     <span>View full profile</span>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowResetPasswordModal(true)
+                      setProfileDropdownOpen(false)
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      width: '100%',
+                      padding: '0.65rem 0.85rem',
+                      background: 'transparent',
+                      border: 'none',
+                      borderRadius: '10px',
+                      color: 'var(--text-dark)',
+                      fontSize: '0.88rem',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      whiteSpace: 'nowrap',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-surface-soft)'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <span>Change password</span>
                   </button>
 
                   <div style={{ height: '1px', background: 'var(--border-warm)', margin: '0.3rem 0' }} />
@@ -3304,6 +3349,14 @@ function App() {
                         className="profile-edit-btn"
                       >
                         Edit Profile
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setShowResetPasswordModal(true)}
+                        className="profile-edit-btn"
+                      >
+                        Change Password
                       </button>
 
                       <button
