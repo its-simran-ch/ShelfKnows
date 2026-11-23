@@ -1072,19 +1072,78 @@ function App() {
   }
 
   useEffect(() => {
-    // Detect if current URL indicates an incoming auth callback or password recovery link
     const searchParams = new URLSearchParams(window.location.search)
-    const hash = window.location.hash || ''
-    const isRecoveryUrl =
-      hash.includes('type=recovery') ||
-      hash.includes('access_token') ||
-      searchParams.get('type') === 'recovery' ||
-      searchParams.has('code')
+    const hashParams = new URLSearchParams(window.location.hash ? window.location.hash.replace(/^#/, '') : '')
 
-    if (isRecoveryUrl) {
+    const tokenHash = searchParams.get('token_hash') || hashParams.get('token_hash')
+    const type = searchParams.get('type') || hashParams.get('type')
+    const code = searchParams.get('code') || hashParams.get('code')
+    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description')
+    const errorCode = searchParams.get('error_code') || hashParams.get('error_code')
+
+    // 1. If link has expired or error occurred
+    if (errorDesc || errorCode) {
+      const friendlyMsg = errorDesc
+        ? decodeURIComponent(errorDesc.replace(/\+/g, ' '))
+        : 'This reset link has expired or was already used. Please request a new link.'
+      setAuthError(friendlyMsg)
+      setAuthMode('forgot')
+      setShowAuthModal(true)
+      try {
+        window.history.replaceState({}, document.title, window.location.pathname)
+      } catch { }
+      return
+    }
+
+    // 2. If token_hash is present (Supabase verifyOtp flow)
+    if (tokenHash && (type === 'recovery' || type === 'email_change' || !type)) {
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type: type || 'recovery' }).then(({ data, error }) => {
+        if (!error && data?.session) {
+          setUser(data.session.user)
+          setShowResetPasswordModal(true)
+          try {
+            window.history.replaceState({}, document.title, window.location.pathname)
+          } catch { }
+        } else if (error) {
+          setAuthError(error.message || 'Reset link expired. Please request a new one.')
+          setAuthMode('forgot')
+          setShowAuthModal(true)
+        }
+      })
+      return
+    }
+
+    // 3. If PKCE authorization code is present
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+        if (!error && data?.session) {
+          setUser(data.session.user)
+          setShowResetPasswordModal(true)
+          try {
+            window.history.replaceState({}, document.title, window.location.pathname)
+          } catch { }
+        } else if (error) {
+          supabase.auth.getSession().then(({ data: sessData }) => {
+            if (sessData?.session) {
+              setShowResetPasswordModal(true)
+            } else {
+              setAuthError(error.message || 'Reset link expired. Please request a new one.')
+              setAuthMode('forgot')
+              setShowAuthModal(true)
+            }
+          })
+        }
+      })
+      return
+    }
+
+    // 4. If hash has recovery or access_token
+    const rawHash = window.location.hash || ''
+    if (rawHash.includes('type=recovery') || rawHash.includes('access_token')) {
       setShowResetPasswordModal(true)
     }
 
+    // 5. Existing active session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user)
