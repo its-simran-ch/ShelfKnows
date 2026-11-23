@@ -1765,33 +1765,6 @@ function App() {
                     <span>View full profile</span>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      setShowResetPasswordModal(true)
-                      setProfileDropdownOpen(false)
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      width: '100%',
-                      padding: '0.65rem 0.85rem',
-                      background: 'transparent',
-                      border: 'none',
-                      borderRadius: '10px',
-                      color: 'var(--text-dark)',
-                      fontSize: '0.88rem',
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      whiteSpace: 'nowrap',
-                      transition: 'background 0.15s ease'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-surface-soft)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                  >
-                    <span>Change password</span>
-                  </button>
-
                   <div style={{ height: '1px', background: 'var(--border-warm)', margin: '0.3rem 0' }} />
 
                   <button
