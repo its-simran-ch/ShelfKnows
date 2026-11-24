@@ -1933,7 +1933,6 @@ function App() {
 
                           {/* Body Content */}
                           <div className="card-body-atelier">
-                            <div className="card-genre-pill">{book.published_year ? `Published ${book.published_year}` : 'Curated Discovery'}</div>
                             <h3 className="card-book-title">{book.title}</h3>
                             <div className="card-book-author">By {book.authors || 'Unknown Author'}</div>
 
@@ -2385,7 +2384,6 @@ function App() {
 
                             {/* Right Body Content */}
                             <div className="card-body-atelier">
-                              <div className="card-genre-pill">{book.published_year ? `Published ${book.published_year}` : 'Curated Discovery'}</div>
                               <h3 className="card-book-title">{book.title}</h3>
                               <div className="card-book-author">By {book.authors || selectedAuthor}</div>
 
