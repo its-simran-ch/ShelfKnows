@@ -1497,7 +1497,8 @@ body {
 }
 
 #curated-results-shelf .curator-note-text,
-.author-books-container .curator-note-text {
+.author-books-container .curator-note-text,
+.bestsellers-strip-container .curator-note-text {
   font-size: 0.88rem;
   color: var(--text-dark);
   line-height: 1.6;

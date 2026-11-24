@@ -830,32 +830,28 @@ function App() {
       authors: "James Clear",
       average_rating: 4.38,
       image_url: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1655988385i/40121378.jpg",
-      description: "An immensely practical guide on how small, incremental daily changes compound into massive, life-altering transformations. Clear unpacks the psychology of cues, cravings, responses, and rewards to make good habits inevitable and bad habits impossible.",
-      why_loved: "A timeless masterclass in personal growth. Rather than relying on willpower, Clear provides actionable systems and frameworks that make lasting habit changes feel effortless and natural."
+      description: "An immensely practical guide on how small, incremental daily changes compound into massive, life-altering transformations. Clear unpacks the psychology of cues, cravings, responses, and rewards to make good habits inevitable and bad habits impossible."
     },
     {
       title: "The Hunger Games",
       authors: "Suzanne Collins",
       average_rating: 4.32,
       image_url: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1586722975i/2767052.jpg",
-      description: "In a dystopian post-apocalyptic future, sixteen-year-old Katniss Everdeen volunteers to take her younger sister's place in the Capitol's brutal annual televised fight to the death known as the Hunger Games.",
-      why_loved: "A breathless, emotionally resonant story of survival, rebellion, and moral courage. Collins crafts unforgettable character dynamics and relentless pacing that holds readers captive from the very first page."
+      description: "In a dystopian post-apocalyptic future, sixteen-year-old Katniss Everdeen volunteers to take her younger sister's place in the Capitol's brutal annual televised fight to the death known as the Hunger Games."
     },
     {
       title: "Dune",
       authors: "Frank Herbert",
       average_rating: 4.26,
       image_url: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1555447414i/44767458.jpg",
-      description: "Set on the harsh desert planet Arrakis, Dune tells the story of young Paul Atreides as his noble family inherits stewardship of the galaxy's sole source of the universe's most coveted substance: the spice melange.",
-      why_loved: "Widely regarded as one of science fiction's greatest masterpieces. Herbert builds a breathtakingly detailed world balancing planetary ecology, political intrigue, and timeless philosophical dilemmas."
+      description: "Set on the harsh desert planet Arrakis, Dune tells the story of young Paul Atreides as his noble family inherits stewardship of the galaxy's sole source of the universe's most coveted substance: the spice melange."
     },
     {
       title: "The Midnight Library",
       authors: "Matt Haig",
       average_rating: 4.18,
       image_url: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1602190253i/52578297.jpg",
-      description: "Between life and death there is an infinite library where every book offers a chance to experience another life you might have lived, allowing Nora Seed to undo past regrets and explore parallel paths.",
-      why_loved: "A warm, deeply comforting contemplation of human regret, mental health, and second chances. Haig gently reminds readers that even ordinary, quiet lives are filled with meaning and wonder."
+      description: "Between life and death there is an infinite library where every book offers a chance to experience another life you might have lived, allowing Nora Seed to undo past regrets and explore parallel paths."
     }
   ]
 
@@ -2140,48 +2136,15 @@ function App() {
                           <span>{item.average_rating ? Number(item.average_rating).toFixed(2) : '4.3'} / 5.0</span>
                         </div>
 
-                        {/* Dual Side-by-Side Information Boxes with Inline More/Less */}
-                        <div className="card-dual-boxes-row">
-                          {item.description && (
-                            <div className="curator-note-card synopsis-box">
-                              <div className="curator-box-header">Book Synopsis</div>
-                              <div className={`curator-note-text ${expandedBoxes[`${item.title}_bestseller_synopsis`] ? 'expanded' : ''}`}>
-                                {item.description}
-                              </div>
-                              {item.description.length > 170 && (
-                                <button
-                                  className="btn-read-more-toggle"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleBoxExpand(`${item.title}_bestseller_synopsis`)
-                                  }}
-                                >
-                                  {expandedBoxes[`${item.title}_bestseller_synopsis`] ? 'Show Less ▴' : 'Read More ▾'}
-                                </button>
-                              )}
-                            </div>
-                          )}
-
-                          {item.why_loved && (
-                            <div className="curator-note-card rationale-box">
-                              <div className="curator-box-header">Why Readers Love This Book</div>
-                              <div className={`curator-note-text ${expandedBoxes[`${item.title}_bestseller_rationale`] ? 'expanded' : ''}`}>
-                                {item.why_loved}
-                              </div>
-                              {item.why_loved.length > 170 && (
-                                <button
-                                  className="btn-read-more-toggle"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleBoxExpand(`${item.title}_bestseller_rationale`)
-                                  }}
-                                >
-                                  {expandedBoxes[`${item.title}_bestseller_rationale`] ? 'Show Less ▴' : 'Read More ▾'}
-                                </button>
-                              )}
-                            </div>
-                          )}
-                        </div>
+                        {/* Book Synopsis Box (Full Width Horizontal) */}
+                        {item.description && (
+                          <div className="curator-note-card" style={{ width: '100%', boxSizing: 'border-box', marginTop: 'auto', marginBottom: '1.25rem' }}>
+                            <div className="curator-box-header">Book Synopsis</div>
+                            <p className="curator-note-text" style={{ margin: 0 }}>
+                              {item.description}
+                            </p>
+                          </div>
+                        )}
 
                         {/* Inline Card Action Buttons */}
                         <div className="card-actions-row">
