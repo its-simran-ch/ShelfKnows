@@ -4306,19 +4306,6 @@ function App() {
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               Step into an intelligent library crafted for lovers of deep reading. Tell us what you love or how you feel, and let ShelfKnows uncover the stories meant for you.
             </p>
-            <div style={{ marginTop: '0.85rem', fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.75)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
-              <span>Explore more</span>
-              <button
-                className="footer-about-link-btn"
-                onClick={() => {
-                  navigateTo('about')
-                  window.scrollTo({ top: 0, behavior: 'smooth' })
-                }}
-              >
-                <span>About ShelfKnows</span>
-                <span style={{ fontSize: '0.85rem' }}>→</span>
-              </button>
-            </div>
           </div>
 
           <div className="footer-col footer-col-center">
@@ -4327,7 +4314,7 @@ function App() {
               <li><button onClick={() => navigateTo('home')}>Home</button></li>
               <li><button onClick={() => navigateTo('authors')}>Authors</button></li>
               <li><button onClick={() => navigateTo('articles')}>The Reading Room</button></li>
-              <li><button onClick={() => navigateTo('community')}>The Community</button></li>
+              <li><button onClick={() => navigateTo('about')}>About ShelfKnows</button></li>
             </ul>
           </div>
 
