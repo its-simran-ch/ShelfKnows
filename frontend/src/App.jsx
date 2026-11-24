@@ -672,7 +672,7 @@ function App() {
     if (hash === 'architecture') return 'about'
     if (hash.startsWith('articles') || hash.startsWith('reading-room')) return 'articles'
     if (hash === 'community' || hash === 'share-a-book' || hash === 'share-book' || hash === 'recommend') return 'community'
-    if (['authors', 'articles', 'reading-room', 'about', 'genres', 'profile', 'community'].includes(hash)) {
+    if (['authors', 'articles', 'reading-room', 'about', 'profile', 'community'].includes(hash)) {
       return hash === 'reading-room' ? 'articles' : hash
     }
     return 'home'
@@ -808,14 +808,6 @@ function App() {
     return [1, '...', authorsCatalogCurrentPage - 1, authorsCatalogCurrentPage, authorsCatalogCurrentPage + 1, '...', totalPages]
   }
 
-  // 4. Dropdown Menu & Dedicated Genre Page State
-  const [genresDropdownOpen, setGenresDropdownOpen] = useState(false)
-  const [selectedGenre, setSelectedGenre] = useState('All Genres')
-  const dropdownRef = useRef(null)
-  const [genreBooks, setGenreBooks] = useState([])
-  const [loadingGenreBooks, setLoadingGenreBooks] = useState(false)
-  const [genreCurrentPage, setGenreCurrentPage] = useState(1)
-  const GENRE_BOOKS_PER_PAGE = 5
   const [expandedBoxes, setExpandedBoxes] = useState({})
 
   const toggleBoxExpand = (boxKey) => {
@@ -824,18 +816,6 @@ function App() {
       [boxKey]: !prev[boxKey]
     }))
   }
-
-  const genresList = [
-    "All Genres",
-    "Fantasy & Magic",
-    "Science Fiction",
-    "Mystery & Thriller",
-    "Romance",
-    "History & Biography",
-    "Business & Self-Help",
-    "Technology & AI Science",
-    "General Fiction"
-  ]
 
   const samplePrompts = [
     "high-stakes survival games and rebellion",
@@ -1340,17 +1320,6 @@ function App() {
     }
   }
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setGenresDropdownOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
-
   const checkHealth = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/health`)
@@ -1493,43 +1462,8 @@ function App() {
 
   const onChipClick = (sample) => {
     setQuery(sample)
-    setSelectedGenre('All Genres')
     handleSearch(sample)
   }
-
-  const fetchGenreBooks = async (genreName = selectedGenre) => {
-    const targetGenre = (genreName && genreName !== 'All Genres') ? genreName : 'Fantasy & Magic'
-    setLoadingGenreBooks(true)
-    try {
-      const res = await fetch(`${API_BASE_URL}/api/genres/books?genre=${encodeURIComponent(targetGenre)}&limit=20`)
-      if (res.ok) {
-        const data = await res.json()
-        setGenreBooks(data.books || [])
-        setGenreCurrentPage(1)
-      }
-    } catch (err) {
-      console.error("Failed to fetch genre books:", err)
-    } finally {
-      setLoadingGenreBooks(false)
-    }
-  }
-
-  const onGenreSelect = (genre) => {
-    // If clicking the currently selected genre, toggle back to 'All Genres'
-    const target = (genre && genre !== selectedGenre) ? genre : 'All Genres'
-    setSelectedGenre(target)
-    setGenreCurrentPage(1)
-    setGenresDropdownOpen(false)
-    navigateTo('genres')
-    fetchGenreBooks(target)
-  }
-
-  // Load genre books whenever Genres page opens
-  useEffect(() => {
-    if (currentPage === 'genres' && genreBooks.length === 0) {
-      fetchGenreBooks(selectedGenre)
-    }
-  }, [currentPage, selectedGenre])
 
   const toggleSaveBook = async (book, e) => {
     if (e) e.stopPropagation()
@@ -1600,20 +1534,6 @@ function App() {
           <li className="nav-link-item">
             <button className={`nav-btn ${currentPage === 'home' ? 'active' : ''}`} onClick={() => navigateTo('home')}>
               Home
-            </button>
-          </li>
-
-          {/* Genres Direct Link */}
-          <li className="nav-link-item">
-            <button
-              className={`nav-btn ${currentPage === 'genres' ? 'active' : ''}`}
-              onClick={() => {
-                setSelectedGenre('All Genres')
-                fetchGenreBooks('All Genres')
-                navigateTo('genres')
-              }}
-            >
-              Genres
             </button>
           </li>
 
@@ -1836,7 +1756,7 @@ function App() {
               <div className="curator-search-header">
                 <h2 className="curator-search-lead-serif">Your bookshelf awaits its next story.</h2>
                 <p className="curator-search-lead-sub">
-                  Type your reading preferences in the search box below or select a genre from the top menu.
+                  Describe the mood, theme, or feeling you're looking for in the search box below.
                 </p>
               </div>
 
@@ -2013,7 +1933,7 @@ function App() {
 
                           {/* Body Content */}
                           <div className="card-body-atelier">
-                            <div className="card-genre-pill">{book.genres || 'General Fiction'}</div>
+                            <div className="card-genre-pill">{book.published_year ? `Published ${book.published_year}` : 'Curated Discovery'}</div>
                             <h3 className="card-book-title">{book.title}</h3>
                             <div className="card-book-author">By {book.authors || 'Unknown Author'}</div>
 
@@ -2193,7 +2113,7 @@ function App() {
                         </button>
                       </div>
                       <div className="card-body-atelier">
-                        <div className="card-genre-pill">{item.genres}</div>
+                        <div className="card-genre-pill">★ Reader Favorite</div>
                         <h3 className="card-book-title">{item.title}</h3>
                         <div className="card-book-author">By {item.authors}</div>
                         <div className="card-rating-strip">
@@ -2215,227 +2135,6 @@ function App() {
           </section>
         </>
       )}
-
-      {/* ================= PAGE: GENRES CATALOG (20 HIGH RATING MASTERPIECES) ================= */}
-      {currentPage === 'genres' && (
-        <main className="editorial-page-container">
-          <div className="editorial-page-hero">
-            <h1 className="editorial-page-title">
-              {selectedGenre === 'All Genres' ? 'The Best of All Genres' : `The Best of ${selectedGenre}`}
-            </h1>
-            <p className="editorial-page-subtitle">
-              {selectedGenre === 'All Genres'
-                ? 'Explore 20 celebrated works across all genres with the highest reader ratings from our 50,000 Goodreads dataset.'
-                : `Explore 20 celebrated works in ${selectedGenre} with the highest reader ratings from our 50,000 Goodreads dataset.`}
-            </p>
-          </div>
-
-          {/* Horizontal Genre Pill Switcher */}
-          <div className="genre-pills-bar">
-            {genresList.filter(g => g !== 'All Genres').map((g) => (
-              <button
-                key={g}
-                className={`genre-pill-btn ${selectedGenre === g ? 'active' : ''}`}
-                onClick={() => onGenreSelect(g)}
-              >
-                {g}
-              </button>
-            ))}
-          </div>
-
-          {/* Genre Books List */}
-          {loadingGenreBooks ? (
-            <div style={{ textAlign: 'center', padding: '5rem 1rem' }}>
-              <div className="atelier-spinner" style={{ margin: '0 auto 1.2rem auto' }}></div>
-              <p style={{ fontFamily: 'var(--font-heading)', fontStyle: 'italic', fontSize: '1.2rem', color: 'var(--forest-deep)' }}>
-                Curating top 20 masterpieces in {selectedGenre === 'All Genres' ? 'all genres' : selectedGenre}...
-              </p>
-            </div>
-          ) : genreBooks.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '4rem 1.5rem', background: 'var(--bg-surface)', borderRadius: '20px', border: '1px dashed var(--border-warm)', maxWidth: '680px', margin: '0 auto' }}>
-              <p style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', color: 'var(--forest-deep)', marginBottom: '0.4rem' }}>
-                No books found for {selectedGenre} in the dataset slice.
-              </p>
-              <button
-                className="btn-search-atelier"
-                style={{ padding: '0.6rem 1.5rem', fontSize: '0.86rem', marginTop: '0.8rem' }}
-                onClick={() => fetchGenreBooks(selectedGenre)}
-              >
-                🔄 Refresh Books
-              </button>
-            </div>
-          ) : (
-            <div className="genre-books-container">
-              <div id="genre-books-anchor" className="genre-handwritten-note-wrap">
-                <span className="genre-handwritten-note">
-                  Get a glimpse into each story and why it deserves a spot on your shelf
-                </span>
-              </div>
-
-              <div className="books-editorial-grid">
-                {genreBooks
-                  .slice((genreCurrentPage - 1) * GENRE_BOOKS_PER_PAGE, genreCurrentPage * GENRE_BOOKS_PER_PAGE)
-                  .map((book, idx) => {
-                    const saved = isBookSaved(book)
-                    return (
-                      <div
-                        key={book.book_id || idx}
-                        className="book-card-atelier"
-                      >
-                        {/* Left Cover */}
-                        <div className="card-top-cover-wrap">
-                          {book.image_url ? (
-                            <img
-                              src={book.image_url}
-                              alt={book.title}
-                              className="card-cover-image"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                                e.target.nextSibling.style.display = 'flex';
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className="card-cover-fallback"
-                            style={{ display: book.image_url ? 'none' : 'flex' }}
-                          >
-                            {book.title}
-                          </div>
-
-                          {/* Ribbon Bookmark Button */}
-                          <button
-                            className={`ribbon-bookmark-btn ${saved ? 'saved' : ''}`}
-                            title={saved ? 'Remove from My Shelf' : 'Save to My Shelf'}
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              toggleSaveBook(book, e)
-                            }}
-                          >
-                            {saved ? '★' : '★'}
-                          </button>
-                        </div>
-
-                        {/* Right Details */}
-                        <div className="card-body-atelier">
-                          {/* Rating Strip */}
-                          <div className="card-rating-strip">
-                            <span className="rating-star-gold">★</span>
-                            <span>{book.average_rating ? Number(book.average_rating).toFixed(2) : '4.50'} / 5.0</span>
-                          </div>
-
-                          {/* Title & Author */}
-                          <h3 className="card-book-title">{book.title}</h3>
-                          <div className="card-book-author">By {book.authors}</div>
-
-                          {/* Genre Pill Tag */}
-                          <div className="card-genre-pill">{book.genres}</div>
-
-                          {/* Dual-Box Grid with Inline More/Less */}
-                          <div className="card-dual-boxes-row">
-                            <div className="curator-note-card">
-                              <div className="curator-box-header">BOOK SYNOPSIS</div>
-                              <p className={`curator-note-text ${expandedBoxes[`${book.book_id || book.title}_genre_syn`] ? 'expanded' : ''}`}>
-                                {book.description || `An acclaimed work exploring compelling themes and rich narrative depth.`}
-                              </p>
-                              {(book.description || '').length > 170 && (
-                                <button
-                                  className="btn-read-more-toggle"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleBoxExpand(`${book.book_id || book.title}_genre_syn`)
-                                  }}
-                                >
-                                  {expandedBoxes[`${book.book_id || book.title}_genre_syn`] ? 'Show Less ▴' : 'Read More ▾'}
-                                </button>
-                              )}
-                            </div>
-
-                            <div className="curator-note-card">
-                              <div className="curator-box-header">WHY THIS WAS PICKED FOR YOU?</div>
-                              <p className={`curator-note-text ${expandedBoxes[`${book.book_id || book.title}_genre_ai`] ? 'expanded' : ''}`}>
-                                {book.ai_explanation || `Ranked among the premier high-rated works in ${selectedGenre} based on Goodreads popularity and literary acclaim.`}
-                              </p>
-                              {(book.ai_explanation || '').length > 170 && (
-                                <button
-                                  className="btn-read-more-toggle"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    toggleBoxExpand(`${book.book_id || book.title}_genre_ai`)
-                                  }}
-                                >
-                                  {expandedBoxes[`${book.book_id || book.title}_genre_ai`] ? 'Show Less ▴' : 'Read More ▾'}
-                                </button>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Interactive Bottom Actions */}
-                          <div className="card-actions-row" onClick={(e) => e.stopPropagation()}>
-                            <button
-                              className={`btn-card-action btn-save-shelf ${saved ? 'saved' : ''}`}
-                              onClick={(e) => toggleSaveBook(book, e)}
-                            >
-                              {saved ? '★ Saved on Shelf' : '☆ Save to My Shelf'}
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-              </div>
-
-              {/* E-Commerce Pagination Bar (5 books per page, 4 pages for 20 books) */}
-              {Math.ceil(genreBooks.length / GENRE_BOOKS_PER_PAGE) > 1 && (
-                <div className="genre-pagination-bar">
-                  <div className="genre-pagination-info">
-                    Page <strong>{genreCurrentPage}</strong> of <strong>{Math.ceil(genreBooks.length / GENRE_BOOKS_PER_PAGE)}</strong>
-                  </div>
-
-                  <div className="genre-pagination-controls">
-                    <button
-                      className="pagination-nav-btn"
-                      disabled={genreCurrentPage === 1}
-                      onClick={() => {
-                        const prevP = genreCurrentPage - 1
-                        setGenreCurrentPage(prevP)
-                        document.getElementById('genre-books-anchor')?.scrollIntoView({ behavior: 'smooth' })
-                      }}
-                    >
-                      PREV
-                    </button>
-
-                    {Array.from({ length: Math.ceil(genreBooks.length / GENRE_BOOKS_PER_PAGE) }, (_, i) => i + 1).map((pageNum) => (
-                      <button
-                        key={pageNum}
-                        className={`pagination-page-btn ${genreCurrentPage === pageNum ? 'active' : ''}`}
-                        onClick={() => {
-                          setGenreCurrentPage(pageNum)
-                          document.getElementById('genre-books-anchor')?.scrollIntoView({ behavior: 'smooth' })
-                        }}
-                      >
-                        {pageNum}
-                      </button>
-                    ))}
-
-                    <button
-                      className="pagination-nav-btn"
-                      disabled={genreCurrentPage === Math.ceil(genreBooks.length / GENRE_BOOKS_PER_PAGE)}
-                      onClick={() => {
-                        const nextP = genreCurrentPage + 1
-                        setGenreCurrentPage(nextP)
-                        document.getElementById('genre-books-anchor')?.scrollIntoView({ behavior: 'smooth' })
-                      }}
-                    >
-                      NEXT
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </main>
-      )}
-
 
       {/* ================= PAGE: AUTHORS DIRECTORY & BOOKS ================= */}
       {currentPage === 'authors' && (
@@ -2533,8 +2232,8 @@ function App() {
                             <div className="author-books-count-row">
                               {author.book_count} {author.book_count === 1 ? 'book' : 'books'}
                             </div>
-                            <div className="author-genre-row" title={author.genre}>
-                              {author.genre}
+                            <div className="author-genre-row">
+                              Catalog Author
                             </div>
                           </div>
                           <span style={{ color: 'var(--forest-deep)', fontWeight: 'bold', fontSize: '1.05rem', marginLeft: 'auto', paddingLeft: '0.4rem', flexShrink: 0 }}>→</span>
@@ -2686,7 +2385,7 @@ function App() {
 
                             {/* Right Body Content */}
                             <div className="card-body-atelier">
-                              <div className="card-genre-pill">{book.genres || 'General Fiction'}</div>
+                              <div className="card-genre-pill">{book.published_year ? `Published ${book.published_year}` : 'Curated Discovery'}</div>
                               <h3 className="card-book-title">{book.title}</h3>
                               <div className="card-book-author">By {book.authors || selectedAuthor}</div>
 
@@ -3049,10 +2748,10 @@ function App() {
                       className="inspiration-chip-btn"
                       style={{ padding: '0.65rem 1.4rem', fontSize: '0.86rem' }}
                       onClick={() => {
-                        navigateTo('genres')
+                        navigateTo('home')
                       }}
                     >
-                      Explore Curated Masterworks ↗
+                      Discover Your Next Read ↗
                     </button>
                   </div>
                 </div>
@@ -3475,9 +3174,9 @@ function App() {
                       <button
                         className="btn-search-atelier"
                         style={{ padding: '0.6rem 1.6rem', fontSize: '0.86rem' }}
-                        onClick={() => navigateTo('genres')}
+                        onClick={() => navigateTo('home')}
                       >
-                        Explore Books & Genres
+                        Discover Books by Mood
                       </button>
                     </div>
                   ) : (
@@ -3502,7 +3201,7 @@ function App() {
                             )}
 
                             <div className="profile-book-info">
-                              <div className="profile-book-genre">{book.genres || 'Literature'}</div>
+                              <div className="profile-book-genre">{book.published_year ? `Published ${book.published_year}` : 'Saved Read'}</div>
                               <div
                                 className="profile-book-title"
                                 onClick={() => setSelectedBook(book)}
@@ -4050,10 +3749,10 @@ function App() {
                     />
                   </div>
 
-                  {/* Box 3: Genre */}
+                  {/* Box 3: Theme */}
                   <div>
                     <label className="recommend-label">
-                      <span>Genre / Category</span> <span style={{ color: '#E11D48' }}>*</span>
+                      <span>Reading Theme / Category</span> <span style={{ color: '#E11D48' }}>*</span>
                     </label>
                     <select
                       required
@@ -4061,7 +3760,7 @@ function App() {
                       value={commGenre}
                       onChange={(e) => setCommGenre(e.target.value)}
                     >
-                      <option value="" disabled>Select a Genre...</option>
+                      <option value="" disabled>Select a Theme...</option>
                       {COMMUNITY_GENRES.map((g) => (
                         <option key={g} value={g}>{g}</option>
                       ))}
@@ -4182,7 +3881,7 @@ function App() {
               gap: '0.5rem'
             }}>
               <span style={{ fontSize: '0.78rem', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.08em', color: 'var(--forest-deep)' }}>
-                Browse by Genre
+                Browse by Theme
               </span>
               <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                 Showing {filteredCommunityPosts.length} {filteredCommunityPosts.length === 1 ? 'recommendation' : 'recommendations'}
@@ -4227,7 +3926,7 @@ function App() {
                   No recommendations in "{communityGenreFilter}" yet
                 </p>
                 <p style={{ fontSize: '0.94rem', color: 'var(--text-muted)', marginBottom: '1.6rem', maxWidth: '480px', margin: '0 auto 1.6rem auto', lineHeight: 1.6 }}>
-                  Be the first fellow reader to share a book that moved you in this genre!
+                  Be the first fellow reader to share a book that moved you in this category!
                 </p>
                 <button
                   className="btn-search-atelier"
@@ -4626,9 +4325,9 @@ function App() {
             <h5>Explore</h5>
             <ul className="footer-links-list">
               <li><button onClick={() => navigateTo('home')}>Home</button></li>
-              <li><button onClick={() => navigateTo('genres')}>Browse All Genres</button></li>
               <li><button onClick={() => navigateTo('authors')}>Authors</button></li>
               <li><button onClick={() => navigateTo('articles')}>The Reading Room</button></li>
+              <li><button onClick={() => navigateTo('community')}>The Community</button></li>
             </ul>
           </div>
 
@@ -4714,7 +4413,7 @@ function App() {
           <div className="modal-card-atelier">
             <div className="modal-header-atelier">
               <span className="hero-editorial-badge" style={{ margin: 0 }}>
-                {selectedBook.genres || 'Literary Work'}
+                {selectedBook.published_year ? `Published ${selectedBook.published_year}` : 'Goodreads Edition'}
               </span>
               <button className="modal-close-round" onClick={() => setSelectedBook(null)}>✕</button>
             </div>
@@ -5586,7 +5285,7 @@ function App() {
                   rows={3}
                   value={editBio}
                   onChange={(e) => setEditBio(e.target.value)}
-                  placeholder="Share a short note about your reading tastes or favorite genres..."
+                  placeholder="Share a short note about your reading tastes or favorite books..."
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
@@ -5812,7 +5511,7 @@ function App() {
                 Curated Tastes & Interests
               </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                {['Fantasy & Magic', 'Mystery & Thriller', 'Science Fiction', 'Psychology & Habits'].map((genre, idx) => (
+                {['Fiction', 'Psychology & Non-Fiction', 'Mystery & Crime', 'Thought-Provoking'].map((theme, idx) => (
                   <span
                     key={idx}
                     style={{
@@ -5825,7 +5524,7 @@ function App() {
                       borderRadius: '9999px'
                     }}
                   >
-                    {genre}
+                    {theme}
                   </span>
                 ))}
               </div>
