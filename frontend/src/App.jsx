@@ -3997,12 +3997,23 @@ function App() {
                         />
 
                         <div>
+                          <div style={{
+                            fontSize: '0.68rem',
+                            fontWeight: 800,
+                            letterSpacing: '0.08em',
+                            textTransform: 'uppercase',
+                            color: 'var(--text-muted)',
+                            marginBottom: '0.18rem',
+                            lineHeight: 1
+                          }}>
+                            Recommended by
+                          </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <span style={{ fontWeight: 700, fontSize: '0.98rem', color: 'var(--text-dark)' }}>
+                            <span style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-dark)' }}>
                               {post.author_name || 'Reader'}
                             </span>
                           </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '0.15rem' }}>
                             {post.author_role || 'Reader'}{post.date ? ` • ${post.date}` : ''}
                           </div>
                         </div>
