@@ -2276,9 +2276,6 @@ function App() {
                             <div className="author-books-count-row">
                               {author.book_count} {author.book_count === 1 ? 'book' : 'books'}
                             </div>
-                            <div className="author-genre-row">
-                              Catalog Author
-                            </div>
                           </div>
                           <span style={{ color: 'var(--forest-deep)', fontWeight: 'bold', fontSize: '1.05rem', marginLeft: 'auto', paddingLeft: '0.4rem', flexShrink: 0 }}>→</span>
                         </div>
