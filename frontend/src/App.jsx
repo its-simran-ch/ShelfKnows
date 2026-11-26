@@ -2835,8 +2835,8 @@ function App() {
                   <form onSubmit={handlePublishReadingRoomEssay}>
                     {/* 1. Literary Category / Shelf */}
                     <div style={{ marginBottom: '1.3rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
-                        Literary Category / Shelf *
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--forest-deep)', marginBottom: '0.55rem' }}>
+                        <span>Literary Category / Shelf</span> <span style={{ color: '#E11D48' }}>*</span>
                       </label>
                       <select
                         required
@@ -2872,8 +2872,8 @@ function App() {
 
                     {/* 2. Article URL */}
                     <div style={{ marginBottom: '1.3rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
-                        Article URL (Substack, Medium, or LinkedIn) *
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--forest-deep)', marginBottom: '0.55rem', flexWrap: 'wrap' }}>
+                        <span>Article URL (Substack, Medium, or LinkedIn)</span> <span style={{ color: '#E11D48' }}>*</span>
                       </label>
                       <input
                         type="url"
