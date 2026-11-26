@@ -3040,15 +3040,19 @@ body {
 }
 
 .article-category-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 0.74rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--forest-deep);
-  background: var(--bg-surface-soft);
-  padding: 0.28rem 0.8rem;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.95rem;
   border-radius: 9999px;
-  font-weight: 800;
+  background: var(--forest-deep);
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 10px rgba(18, 18, 18, 0.18);
 }
 
 .article-card-title {
