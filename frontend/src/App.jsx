@@ -2791,35 +2791,10 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
-                    <div>
-                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                        Share What You've Written, We'd Love to Read ❤️
-                      </h3>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowShareEssayForm(false)
-                        setEssayUrl('')
-                        setEssayTitle('')
-                        setEssayTeaser('')
-                        setEssayCoverImage('')
-                        setEssayCategory('')
-                        setPreviewFetchStatus(null)
-                        setRelevanceWarning('')
-                      }}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        fontSize: '1.4rem',
-                        color: 'var(--text-muted)',
-                        cursor: 'pointer',
-                        padding: '0.2rem 0.5rem'
-                      }}
-                    >
-                      ✕
-                    </button>
+                  <div style={{ marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
+                      Share What You've Written, We'd Love to Read ❤️
+                    </h3>
                   </div>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
