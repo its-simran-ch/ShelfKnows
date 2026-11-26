@@ -4296,7 +4296,7 @@ function App() {
                 onClick={() => setShowCommunityForm(!showCommunityForm)}
                 style={{ padding: '0.85rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
               >
-                {showCommunityForm ? '✕ Close Recommendation Form' : 'Click to Recommend a Book to Fellow Readers'}
+                {showCommunityForm ? '✕ Close Recommendation Form' : 'Recommend a Book to Fellow Readers →'}
               </button>
             </div>
           </div>
