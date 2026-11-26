@@ -4287,7 +4287,7 @@ function App() {
             </h1>
 
             <p className="editorial-page-subtitle" style={{ maxWidth: '680px', margin: '0 auto 2.2rem auto', fontSize: '1.08rem', lineHeight: 1.8 }}>
-              A shared space where book lovers leave behind the stories that touched their lives, discover new reads through each other, and chat about the lines that stayed with them.
+              A shared space where book lovers discover new reads through each other, and chat about the lines that stayed with them.
             </p>
 
             <div>
