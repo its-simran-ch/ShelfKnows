@@ -294,7 +294,7 @@ function App() {
   const [showShareEssayForm, setShowShareEssayForm] = useState(false)
   const [essayUrl, setEssayUrl] = useState('')
   const [essayPlatform, setEssayPlatform] = useState('Substack')
-  const [essayCategory, setEssayCategory] = useState('BOOK REFLECTIONS & REVIEWS')
+  const [essayCategory, setEssayCategory] = useState('')
   const [essayTitle, setEssayTitle] = useState('')
   const [essayTeaser, setEssayTeaser] = useState('')
   const [essayCoverImage, setEssayCoverImage] = useState('')
@@ -404,6 +404,10 @@ function App() {
   const handlePublishReadingRoomEssay = (e) => {
     e.preventDefault()
     if (!essayUrl.trim()) return
+    if (!essayCategory) {
+      alert('Please select a literary category / shelf for your essay.')
+      return
+    }
 
     let finalUrl = essayUrl.trim()
     if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
@@ -459,7 +463,7 @@ function App() {
     setEssayCoverImage('')
     setEssayAuthor('')
     setEssayPlatform('Substack')
-    setEssayCategory('BOOK REFLECTIONS & REVIEWS')
+    setEssayCategory('')
     setPreviewFetchStatus(null)
     setRelevanceWarning('')
     setShowShareEssayForm(false)
@@ -2790,7 +2794,7 @@ function App() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                        Share Your Writing with the Reading Community
+                        Share Your Writing with the Reading Community ❤️
                       </h3>
                     </div>
                     <button
@@ -2801,6 +2805,7 @@ function App() {
                         setEssayTitle('')
                         setEssayTeaser('')
                         setEssayCoverImage('')
+                        setEssayCategory('')
                         setPreviewFetchStatus(null)
                         setRelevanceWarning('')
                       }}
@@ -2834,6 +2839,7 @@ function App() {
                         Literary Category / Shelf *
                       </label>
                       <select
+                        required
                         value={essayCategory}
                         onChange={(e) => setEssayCategory(e.target.value)}
                         style={{
@@ -2845,7 +2851,7 @@ function App() {
                           background: 'var(--bg-surface-soft)',
                           fontFamily: 'inherit',
                           fontSize: '0.9rem',
-                          color: 'var(--text-dark)',
+                          color: essayCategory ? 'var(--text-dark)' : 'var(--text-muted)',
                           cursor: 'pointer',
                           appearance: 'none',
                           WebkitAppearance: 'none',
@@ -2855,6 +2861,7 @@ function App() {
                           backgroundSize: '1.1rem'
                         }}
                       >
+                        <option value="" disabled>Select a literary shelf...</option>
                         <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
                         <option value="READING HABITS & PSYCHOLOGY">Reading Habits & Psychology</option>
                         <option value="AUTHOR DEEP DIVES & LITERARY LORE">Author Deep Dives & Lore</option>
@@ -2967,7 +2974,7 @@ function App() {
                           </div>
                           <div className="article-card-body-content" style={{ padding: '1.4rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                              <span className="article-category-badge">{essayCategory}</span>
+                              <span className="article-category-badge">{essayCategory || 'LITERARY ESSAY'}</span>
                               <span className={`article-platform-badge article-platform-${essayPlatform.toLowerCase()}`}>
                                 {essayPlatform}
                               </span>
