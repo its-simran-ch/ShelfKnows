@@ -2957,6 +2957,19 @@ function App() {
                       </div>
                     )}
 
+                    {/* Publication Notice */}
+                    <p style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: '0.94rem',
+                      fontStyle: 'italic',
+                      lineHeight: 1.6,
+                      color: 'var(--forest-deep)',
+                      margin: '1.2rem 0 1.6rem 0',
+                      opacity: 0.9
+                    }}>
+                      Your article will be published directly in The Reading Room for all fellow readers to read and discover.
+                    </p>
+
                     {/* Action Buttons */}
                     <div style={{ display: 'flex', gap: '0.9rem', alignItems: 'center' }}>
                       <button
