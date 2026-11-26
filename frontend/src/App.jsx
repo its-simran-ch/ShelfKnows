@@ -2928,9 +2928,6 @@ function App() {
                           <div className="article-card-body-content" style={{ padding: '1.4rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
                               <span className="article-category-badge">{essayCategory || 'LITERARY ESSAY'}</span>
-                              <span className={`article-platform-badge article-platform-${essayPlatform.toLowerCase()}`}>
-                                {essayPlatform}
-                              </span>
                             </div>
                             <h3 className="article-card-title" style={{ fontSize: '1.15rem', marginBottom: '0.4rem' }}>
                               {essayTitle || 'Your Article Title'}
@@ -3081,14 +3078,7 @@ function App() {
 
                         <div className="article-card-body-content">
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem', gap: '0.5rem', flexWrap: 'wrap' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                              <span className="article-category-badge">{article.category}</span>
-                              {platformName && (
-                                <span className={`article-platform-badge article-platform-${platformName.toLowerCase()}`}>
-                                  {platformName}
-                                </span>
-                              )}
-                            </div>
+                            <span className="article-category-badge">{article.category}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                               {article.readTime && !platformName && (
                                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>{article.readTime}</span>
