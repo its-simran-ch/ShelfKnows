@@ -2790,7 +2790,7 @@ function App() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                        ✍️ Share Your Writing with the Readers Community
+                        ✍️ Share Your Writing with the Reading Community
                       </h3>
                     </div>
                     <button
