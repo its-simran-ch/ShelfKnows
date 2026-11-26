@@ -2822,19 +2822,15 @@ function App() {
                     </button>
                   </div>
 
-                  {/* Sanctuary Editorial Note (Substack-style soft rounded box) */}
-                  <div style={{
-                    background: '#EEEEEE',
-                    borderRadius: '10px',
-                    padding: '1.1rem 1.4rem',
-                    marginBottom: '1.5rem',
-                    fontSize: '0.9rem',
+                  {/* Reader Community Invitation Note */}
+                  <p style={{
+                    fontSize: '0.88rem',
+                    color: 'var(--text-muted)',
                     lineHeight: 1.6,
-                    color: '#363737'
+                    margin: '0 0 1.5rem 0'
                   }}>
-                    <strong style={{ color: '#1B1B18', fontWeight: 700 }}>Reading Room Sanctuary:</strong>{' '}
-                    This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
-                  </div>
+                    If you write about your reading experiences and how books have shaped your life, your perspective, or the way you see the world—we would love to read your words here too.
+                  </p>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
                     {/* 1. Literary Category / Shelf */}
