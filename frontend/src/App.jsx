@@ -2770,20 +2770,9 @@ function App() {
               <div className="editorial-page-hero">
                 <h1 className="editorial-page-title">The Reading Room</h1>
                 <p className="editorial-page-subtitle">
-                  Welcome to this quiet corner where some readers share about their reading experiences and how reading changed their life in a peaceful way.
+                  If you write about your reading experiences and how books have shaped your life, your perspective, or the way you see the world—we would love to read your words here too.
                 </p>
-                <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', maxWidth: '680px', margin: '2rem auto 0 auto' }}>
-                  <p style={{
-                    fontSize: '1rem',
-                    color: 'var(--forest-deep)',
-                    lineHeight: 1.6,
-                    fontStyle: 'italic',
-                    fontFamily: 'var(--font-heading)',
-                    margin: 0,
-                    textAlign: 'center'
-                  }}>
-                    If you write about your reading experiences and how books have shaped your life, your perspective, or the way you see the world—we would love to read your words here too.
-                  </p>
+                <div style={{ marginTop: '1.8rem', display: 'flex', justifyContent: 'center' }}>
                   <button
                     className="btn-search-atelier"
                     onClick={() => {
