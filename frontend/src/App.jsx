@@ -2787,14 +2787,11 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.2rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                        ✍️ Share an Essay to The Reading Room
+                        ✍️ Share Your Writing with the Readers Community
                       </h3>
-                      <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0.35rem 0 0 0' }}>
-                        Paste your Substack, Medium, or LinkedIn article link. We automatically extract the cover image, title, and teaser.
-                      </p>
                     </div>
                     <button
                       type="button"
