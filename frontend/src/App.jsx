@@ -2783,7 +2783,7 @@ function App() {
                     }}
                     style={{ padding: '0.8rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
                   >
-                    {showShareEssayForm ? '✕ Close Form' : '✍️ Share an Essay or Article'}
+                    {showShareEssayForm ? '✕ Close Form' : 'Share What You Write ❤️'}
                   </button>
                 </div>
               </div>
@@ -3055,7 +3055,7 @@ function App() {
                         }
                       }}
                     >
-                      ✍️ Share an Essay
+                      Share What You Write ❤️
                     </button>
                     <button
                       type="button"
