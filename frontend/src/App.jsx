@@ -294,7 +294,7 @@ function App() {
   const [showShareEssayForm, setShowShareEssayForm] = useState(false)
   const [essayUrl, setEssayUrl] = useState('')
   const [essayPlatform, setEssayPlatform] = useState('Substack')
-  const [essayCategory, setEssayCategory] = useState('READER PSYCHOLOGY & HABITS')
+  const [essayCategory, setEssayCategory] = useState('BOOK REFLECTIONS & REVIEWS')
   const [essayTitle, setEssayTitle] = useState('')
   const [essayTeaser, setEssayTeaser] = useState('')
   const [essayCoverImage, setEssayCoverImage] = useState('')
@@ -302,6 +302,7 @@ function App() {
   const [isFetchingPreview, setIsFetchingPreview] = useState(false)
   const [previewFetchStatus, setPreviewFetchStatus] = useState(null)
   const [previewErrorMsg, setPreviewErrorMsg] = useState('')
+  const [relevanceWarning, setRelevanceWarning] = useState('')
 
   const fetchArticleMetadata = async (targetUrl) => {
     if (!targetUrl || !targetUrl.trim()) return
@@ -324,6 +325,7 @@ function App() {
     setIsFetchingPreview(true)
     setPreviewFetchStatus(null)
     setPreviewErrorMsg('')
+    setRelevanceWarning('')
 
     try {
       const apiEndpoint = API_BASE_URL
@@ -373,6 +375,20 @@ function App() {
           setEssayAuthor(fetchedData.author)
         }
         setPreviewFetchStatus('success')
+
+        // Smart Literary Relevance Check
+        const textToCheck = `${fetchedData.title || ''} ${fetchedData.description || ''} ${cleanUrl}`.toLowerCase()
+        const spamKeywords = [
+          'crypto', 'bitcoin', 'blockchain', 'solana', 'ethereum', 'forex', 'web3', 'nft',
+          'reactjs', 'kubernetes', 'docker container', 'python tutorial', 'machine learning model',
+          'affiliate marketing', 'dropshipping', 'day trading', 'b2b sales', 'seo ranking'
+        ]
+        const foundSpam = spamKeywords.find((kw) => textToCheck.includes(kw))
+        if (foundSpam) {
+          setRelevanceWarning(`⚠️ This essay appears to mention "${foundSpam}". A gentle reminder: The Reading Room is a quiet sanctuary exclusively for books, literature, reading habits, and personal reflections.`)
+        } else {
+          setRelevanceWarning('')
+        }
       } else {
         setPreviewFetchStatus('fallback')
       }
@@ -412,7 +428,7 @@ function App() {
       title: finalTitle,
       url: finalUrl,
       platform: essayPlatform || 'Substack',
-      category: essayCategory || 'READER PSYCHOLOGY & HABITS',
+      category: essayCategory || 'BOOK REFLECTIONS & REVIEWS',
       coverImage: essayCoverImage.trim() || '/articles/article1.jpeg',
       teaser: essayTeaser.trim() || `A thoughtful essay shared by ${authorDisplayName} on ${essayPlatform || 'Substack'}.`,
       author: authorDisplayName,
@@ -443,8 +459,9 @@ function App() {
     setEssayCoverImage('')
     setEssayAuthor('')
     setEssayPlatform('Substack')
-    setEssayCategory('READER PSYCHOLOGY & HABITS')
+    setEssayCategory('BOOK REFLECTIONS & REVIEWS')
     setPreviewFetchStatus(null)
+    setRelevanceWarning('')
     setShowShareEssayForm(false)
   }
 
@@ -2749,7 +2766,7 @@ function App() {
               <div className="editorial-page-hero">
                 <h1 className="editorial-page-title">The Reading Room</h1>
                 <p className="editorial-page-subtitle">
-                  Welcome to this quiet corner where readers share thoughtful essays, book reflections, and published writings from Substack, Medium, and LinkedIn.
+                  Welcome to this quiet corner where some readers share about their reading experiences and how reading changed their life in a peaceful way.
                 </p>
                 <div style={{ marginTop: '1.8rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
                   <button
@@ -2770,13 +2787,13 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.2rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
                         ✍️ Share an Essay to The Reading Room
                       </h3>
                       <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0.35rem 0 0 0' }}>
-                        Paste your Substack, Medium, or LinkedIn article link. We automatically extract the cover image, title, and teaser for The Reading Room!
+                        Paste your Substack, Medium, or LinkedIn article link. We automatically extract the cover image, title, and teaser.
                       </p>
                     </div>
                     <button
@@ -2788,6 +2805,7 @@ function App() {
                         setEssayTeaser('')
                         setEssayCoverImage('')
                         setPreviewFetchStatus(null)
+                        setRelevanceWarning('')
                       }}
                       style={{
                         background: 'none',
@@ -2802,9 +2820,23 @@ function App() {
                     </button>
                   </div>
 
+                  {/* Sanctuary Editorial Note */}
+                  <div style={{
+                    background: 'rgba(217, 131, 36, 0.08)',
+                    borderLeft: '3.5px solid var(--warm-gold, #D98324)',
+                    padding: '0.75rem 1rem',
+                    borderRadius: '0 10px 10px 0',
+                    marginBottom: '1.4rem',
+                    fontSize: '0.84rem',
+                    lineHeight: 1.55,
+                    color: 'var(--text-dark)'
+                  }}>
+                    <strong>🌿 Reading Room Sanctuary:</strong> This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
+                  </div>
+
                   <form onSubmit={handlePublishReadingRoomEssay}>
                     {/* URL + Category Row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(200px, 1fr)', gap: '1rem', marginBottom: '1.2rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(230px, 1fr)', gap: '1rem', marginBottom: '1.2rem' }}>
                       <div>
                         <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
                           Article URL (Substack, Medium, or LinkedIn) *
@@ -2860,7 +2892,7 @@ function App() {
 
                       <div>
                         <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                          Category / Shelf
+                          Literary Category / Shelf *
                         </label>
                         <select
                           value={essayCategory}
@@ -2875,14 +2907,30 @@ function App() {
                             fontSize: '0.88rem'
                           }}
                         >
-                          <option value="READER PSYCHOLOGY & HABITS">Reader Psychology & Habits</option>
-                          <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
-                          <option value="PHILOSOPHY & MINDSET">Philosophy & Mindset</option>
-                          <option value="LIFE, MEMORY & STORIES">Life, Memory & Stories</option>
-                          <option value="WRITING & CREATIVE JOURNEY">Writing & Creative Journey</option>
+                          <option value="BOOK REFLECTIONS & REVIEWS">📖 Book Reflections & Reviews</option>
+                          <option value="READING HABITS & PSYCHOLOGY">🧠 Reading Habits & Psychology</option>
+                          <option value="AUTHOR DEEP DIVES & LITERARY LORE">✍️ Author Deep Dives & Lore</option>
+                          <option value="BOOKS THAT CHANGED MY LIFE">🌿 Books That Changed My Life</option>
+                          <option value="THE READING LIFE & PHILOSOPHY">☕ The Reading Life & Philosophy</option>
                         </select>
                       </div>
                     </div>
+
+                    {/* Relevance Warning Notice */}
+                    {relevanceWarning && (
+                      <div style={{
+                        background: 'rgba(239, 68, 68, 0.08)',
+                        borderLeft: '3.5px solid #EF4444',
+                        padding: '0.75rem 1rem',
+                        borderRadius: '0 10px 10px 0',
+                        marginBottom: '1.2rem',
+                        fontSize: '0.84rem',
+                        color: '#B91C1C',
+                        lineHeight: 1.5
+                      }}>
+                        {relevanceWarning}
+                      </div>
+                    )}
 
                     {/* Fetch Status Messages */}
                     {isFetchingPreview && (
