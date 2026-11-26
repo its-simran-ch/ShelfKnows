@@ -385,7 +385,7 @@ function App() {
         ]
         const foundSpam = spamKeywords.find((kw) => textToCheck.includes(kw))
         if (foundSpam) {
-          setRelevanceWarning(`This essay appears to mention "${foundSpam}". Please note that The Reading Room is dedicated exclusively to books, literature, reading habits, and personal reflections.`)
+          setRelevanceWarning(`This essay appears to mention "${foundSpam}". A gentle reminder: The Reading Room is a quiet sanctuary exclusively for books, literature, reading habits, and personal reflections.`)
         } else {
           setRelevanceWarning('')
         }
@@ -2779,7 +2779,7 @@ function App() {
                     }}
                     style={{ padding: '0.8rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
                   >
-                    {showShareEssayForm ? '✕ Close Form' : 'Share an Essay or Article'}
+                    {showShareEssayForm ? '✕ Close Form' : '✍️ Share an Essay or Article'}
                   </button>
                 </div>
               </div>
@@ -2787,7 +2787,7 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
                         Share Your Writing with the Reading Community
@@ -2817,24 +2817,28 @@ function App() {
                     </button>
                   </div>
 
-                  {/* Normal text (no quote box, no emojis) */}
-                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 1.6rem 0' }}>
-                    This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
+                  {/* Sanctuary Editorial Note (Normal text, not a callout box) */}
+                  <p style={{
+                    fontSize: '0.88rem',
+                    color: 'var(--text-muted)',
+                    lineHeight: 1.6,
+                    margin: '0 0 1.5rem 0'
+                  }}>
+                    Reading Room Sanctuary: This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
                   </p>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
-                    {/* Row 1: Category label + Dropdown side-by-side */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.4rem', flexWrap: 'wrap' }}>
-                      <label style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', minWidth: '210px' }}>
+                    {/* 1. Literary Category / Shelf */}
+                    <div style={{ marginBottom: '1.3rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
                         Literary Category / Shelf *
                       </label>
                       <select
                         value={essayCategory}
                         onChange={(e) => setEssayCategory(e.target.value)}
                         style={{
-                          flex: 1,
-                          minWidth: '240px',
-                          padding: '0.75rem 1rem',
+                          width: '100%',
+                          padding: '0.75rem 0.95rem',
                           borderRadius: '12px',
                           border: '1.5px solid var(--border-warm)',
                           background: 'var(--bg-surface-soft)',
@@ -2850,12 +2854,12 @@ function App() {
                       </select>
                     </div>
 
-                    {/* Row 2: URL Label on top, then Input + Fetch Preview button side-by-side */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
+                    {/* 2. Article URL + Fetch Preview Button */}
+                    <div style={{ marginBottom: '1.3rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
                         Article URL (Substack, Medium, or LinkedIn) *
                       </label>
-                      <div style={{ display: 'flex', gap: '0.6rem' }}>
+                      <div style={{ display: 'flex', gap: '0.65rem' }}>
                         <input
                           type="url"
                           required
@@ -2920,20 +2924,20 @@ function App() {
                       </div>
                     )}
 
-                    {/* Fetch Status Messages (no emojis) */}
+                    {/* Fetch Status Messages (Zero emojis) */}
                     {isFetchingPreview && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--forest-deep)' }}>
-                        Extracting cover image, title, and synopsis from {essayPlatform}...
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--forest-deep)', display: 'flex', alignItems: 'center' }}>
+                        <span>Extracting cover image, title and synopsis from {essayPlatform}...</span>
                       </div>
                     )}
                     {previewFetchStatus === 'success' && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: '#059669' }}>
-                        Cover image and details extracted automatically. Card preview generated below:
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: '#059669', display: 'flex', alignItems: 'center' }}>
+                        <span>Cover image and details extracted automatically. Here is how your card will appear:</span>
                       </div>
                     )}
                     {previewFetchStatus === 'fallback' && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-                        Article recognized on {essayPlatform}. Card preview generated below:
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
+                        <span>Article recognized on {essayPlatform}. Card preview generated below:</span>
                       </div>
                     )}
 
