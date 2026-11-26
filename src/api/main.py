@@ -1,6 +1,9 @@
 import sys
 import os
 import time
+import urllib.request
+import re
+import html
 import pandas as pd
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
@@ -397,6 +400,92 @@ def get_books_by_genre(genre: str, limit: int = 20):
         "total_books": len(results),
         "books": results
     }
+
+@app.get("/api/articles/preview")
+def preview_article(url: str):
+    """
+    Extracts Open Graph metadata (title, description, cover image, platform) from an article URL
+    (Substack, Medium, LinkedIn, or external blog).
+    """
+    if not url or not url.strip():
+        raise HTTPException(status_code=400, detail="URL is required")
+
+    clean_url = url.strip()
+    if not clean_url.startswith(("http://", "https://")):
+        clean_url = "https://" + clean_url
+
+    # Detect platform
+    lower_url = clean_url.lower()
+    platform = "Substack"
+    if "medium.com" in lower_url:
+        platform = "Medium"
+    elif "linkedin.com" in lower_url:
+        platform = "LinkedIn"
+    elif "substack.com" in lower_url:
+        platform = "Substack"
+
+    try:
+        req = urllib.request.Request(
+            clean_url,
+            headers={
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+            }
+        )
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            raw_html = resp.read(512000).decode("utf-8", errors="ignore")
+
+        def find_tag(prop_name: str) -> Optional[str]:
+            patterns = [
+                rf'<meta\s+[^>]*?(?:property|name)=["\']{re.escape(prop_name)}["\'][^>]*?content=["\'](.*?)["\']',
+                rf'<meta\s+[^>]*?content=["\'](.*?)["\'][^>]*?(?:property|name)=["\']{re.escape(prop_name)}["\']',
+            ]
+            for p in patterns:
+                m = re.search(p, raw_html, re.IGNORECASE | re.DOTALL)
+                if m:
+                    val = m.group(1).strip()
+                    if val:
+                        return html.unescape(val)
+            return None
+
+        title = find_tag("og:title") or find_tag("twitter:title")
+        if not title:
+            title_match = re.search(r'<title[^>]*>(.*?)</title>', raw_html, re.IGNORECASE | re.DOTALL)
+            if title_match:
+                title = html.unescape(title_match.group(1).strip())
+
+        description = (
+            find_tag("og:description")
+            or find_tag("twitter:description")
+            or find_tag("description")
+        )
+        image = find_tag("og:image") or find_tag("twitter:image")
+        author = find_tag("author") or find_tag("article:author") or find_tag("twitter:creator")
+
+        # Clean title suffix (e.g. " | Substack", " - Medium")
+        if title:
+            title = re.sub(r'\s*([|–—-])\s*(Substack|Medium|LinkedIn).*$', '', title, flags=re.IGNORECASE).strip()
+
+        return {
+            "success": True,
+            "url": clean_url,
+            "platform": platform,
+            "title": title or "",
+            "description": description or "",
+            "image": image or "",
+            "author": author or ""
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "url": clean_url,
+            "platform": platform,
+            "title": "",
+            "description": "",
+            "image": "",
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     import uvicorn

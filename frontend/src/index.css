@@ -4158,6 +4158,55 @@ body {
   border: 1px solid var(--border-warm);
 }
 
+.article-platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.22rem 0.72rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.article-platform-substack {
+  background: #FF6719;
+  color: #FFFFFF;
+}
+
+.article-platform-medium {
+  background: #121212;
+  color: #FFFFFF;
+}
+
+.article-platform-linkedin {
+  background: #0A66C2;
+  color: #FFFFFF;
+}
+
+.article-delete-btn {
+  background: transparent;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  color: #DC2626;
+  font-size: 0.76rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  padding: 0.22rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.article-delete-btn:hover {
+  background: rgba(220, 38, 38, 0.08);
+  border-color: #DC2626;
+}
+
+.essay-share-card-box {
+  margin: 0 auto 3.5rem auto;
+  border: 1.5px solid var(--border-warm);
+}
+
 .profile-form-box {
   background: var(--bg-surface);
   border: none;

@@ -266,6 +266,183 @@ function App() {
     }
   }, [userArticles])
 
+  // Reading Room Articles (persisted in localStorage or fallback to default articlesData)
+  const [readingRoomArticles, setReadingRoomArticles] = useState(() => {
+    try {
+      const local = localStorage.getItem('shelfknows_reading_room_articles_v3')
+      if (local) {
+        const parsed = JSON.parse(local)
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed
+        }
+      }
+      return articlesData
+    } catch {
+      return articlesData
+    }
+  })
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('shelfknows_reading_room_articles_v3', JSON.stringify(readingRoomArticles))
+    } catch (e) {
+      console.error(e)
+    }
+  }, [readingRoomArticles])
+
+  // Reading Room Essay Share State & Handlers
+  const [showShareEssayForm, setShowShareEssayForm] = useState(false)
+  const [essayUrl, setEssayUrl] = useState('')
+  const [essayPlatform, setEssayPlatform] = useState('Substack')
+  const [essayCategory, setEssayCategory] = useState('READER PSYCHOLOGY & HABITS')
+  const [essayTitle, setEssayTitle] = useState('')
+  const [essayTeaser, setEssayTeaser] = useState('')
+  const [essayCoverImage, setEssayCoverImage] = useState('')
+  const [essayAuthor, setEssayAuthor] = useState('')
+  const [isFetchingPreview, setIsFetchingPreview] = useState(false)
+  const [previewFetchStatus, setPreviewFetchStatus] = useState(null)
+  const [previewErrorMsg, setPreviewErrorMsg] = useState('')
+
+  const fetchArticleMetadata = async (targetUrl) => {
+    if (!targetUrl || !targetUrl.trim()) return
+    let cleanUrl = targetUrl.trim()
+    if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+      cleanUrl = 'https://' + cleanUrl
+    }
+
+    const lower = cleanUrl.toLowerCase()
+    let detectedPlatform = 'Substack'
+    if (lower.includes('medium.com')) {
+      detectedPlatform = 'Medium'
+    } else if (lower.includes('linkedin.com')) {
+      detectedPlatform = 'LinkedIn'
+    } else if (lower.includes('substack.com')) {
+      detectedPlatform = 'Substack'
+    }
+    setEssayPlatform(detectedPlatform)
+
+    setIsFetchingPreview(true)
+    setPreviewFetchStatus(null)
+    setPreviewErrorMsg('')
+
+    try {
+      const apiEndpoint = API_BASE_URL
+        ? `${API_BASE_URL}/api/articles/preview?url=${encodeURIComponent(cleanUrl)}`
+        : `/api/articles/preview?url=${encodeURIComponent(cleanUrl)}`
+
+      let fetchedData = null
+      try {
+        const res = await fetch(apiEndpoint)
+        if (res.ok) {
+          const data = await res.json()
+          if (data && data.success && (data.title || data.image || data.description)) {
+            fetchedData = data
+          }
+        }
+      } catch (err) {
+        console.warn('Backend preview API unreachable, trying client fallback...', err)
+      }
+
+      if (!fetchedData) {
+        try {
+          const microRes = await fetch(`https://api.microlink.io?url=${encodeURIComponent(cleanUrl)}`)
+          if (microRes.ok) {
+            const microJson = await microRes.json()
+            if (microJson && microJson.status === 'success' && microJson.data) {
+              const d = microJson.data
+              fetchedData = {
+                title: d.title || '',
+                description: d.description || '',
+                image: d.image?.url || d.logo?.url || '',
+                author: d.author || '',
+                platform: detectedPlatform
+              }
+            }
+          }
+        } catch (microErr) {
+          console.warn('Microlink fallback error:', microErr)
+        }
+      }
+
+      if (fetchedData) {
+        if (fetchedData.title) setEssayTitle(fetchedData.title)
+        if (fetchedData.description) setEssayTeaser(fetchedData.description)
+        if (fetchedData.image) setEssayCoverImage(fetchedData.image)
+        if (fetchedData.platform) setEssayPlatform(fetchedData.platform)
+        if (fetchedData.author && !essayAuthor) {
+          setEssayAuthor(fetchedData.author)
+        }
+        setPreviewFetchStatus('success')
+      } else {
+        setPreviewFetchStatus('fallback')
+      }
+    } catch (e) {
+      console.error('Error fetching preview:', e)
+      setPreviewFetchStatus('error')
+      setPreviewErrorMsg('Could not auto-fetch metadata. Please fill in the details below.')
+    } finally {
+      setIsFetchingPreview(false)
+    }
+  }
+
+  const handlePublishReadingRoomEssay = (e) => {
+    e.preventDefault()
+    if (!essayUrl.trim() || !essayTitle.trim()) return
+
+    let finalUrl = essayUrl.trim()
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://' + finalUrl
+    }
+
+    const authorDisplayName = essayAuthor.trim() || profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary'
+    const newId = `essay-${Date.now()}`
+
+    const newArticle = {
+      id: newId,
+      title: essayTitle.trim(),
+      url: finalUrl,
+      platform: essayPlatform || 'Substack',
+      category: essayCategory || 'READER PSYCHOLOGY & HABITS',
+      coverImage: essayCoverImage.trim() || '/articles/article1.jpeg',
+      teaser: essayTeaser.trim() || 'A thoughtful essay shared with readers.',
+      author: authorDisplayName,
+      avatar: currentAvatarSrc,
+      gender: userAvatar,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+      author_id: user?.id || null
+    }
+
+    setReadingRoomArticles((prev) => [newArticle, ...prev])
+
+    // Sync to user profile articles
+    const userArt = {
+      id: newId,
+      title: newArticle.title,
+      url: newArticle.url,
+      platform: newArticle.platform,
+      category: newArticle.category,
+      coverImage: newArticle.coverImage,
+      date: newArticle.date
+    }
+    setUserArticles((prev) => [userArt, ...prev.filter((a) => a.id !== newId)])
+
+    // Reset form
+    setEssayUrl('')
+    setEssayTitle('')
+    setEssayTeaser('')
+    setEssayCoverImage('')
+    setEssayAuthor('')
+    setEssayPlatform('Substack')
+    setEssayCategory('READER PSYCHOLOGY & HABITS')
+    setPreviewFetchStatus(null)
+    setShowShareEssayForm(false)
+  }
+
+  const handleDeleteReadingRoomArticle = (id) => {
+    setReadingRoomArticles((prev) => prev.filter((a) => a.id !== id))
+    setUserArticles((prev) => prev.filter((a) => a.id !== id))
+  }
+
   const [showAddArticleForm, setShowAddArticleForm] = useState(false)
   const [newArticleTitle, setNewArticleTitle] = useState('')
   const [newArticleUrl, setNewArticleUrl] = useState('')
@@ -278,14 +455,34 @@ function App() {
     if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
       finalUrl = 'https://' + finalUrl
     }
+    const newId = `art-${Date.now()}`
+    const authorDisplayName = profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary'
     const newArt = {
-      id: `art-${Date.now()}`,
+      id: newId,
       title: newArticleTitle.trim(),
       url: finalUrl,
       platform: newArticlePlatform || 'Substack',
       date: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     }
     setUserArticles((prev) => [newArt, ...prev])
+
+    // Also share to Reading Room
+    const readingRoomArt = {
+      id: newId,
+      title: newArt.title,
+      url: newArt.url,
+      platform: newArt.platform,
+      category: 'READER PSYCHOLOGY & HABITS',
+      coverImage: '/articles/article1.jpeg',
+      teaser: 'An essay shared by ' + authorDisplayName,
+      author: authorDisplayName,
+      avatar: currentAvatarSrc,
+      gender: userAvatar,
+      date: newArt.date,
+      author_id: user?.id || null
+    }
+    setReadingRoomArticles((prev) => [readingRoomArt, ...prev.filter((a) => a.id !== newId)])
+
     setNewArticleTitle('')
     setNewArticleUrl('')
     setNewArticlePlatform('Substack')
@@ -294,6 +491,7 @@ function App() {
 
   const handleDeleteArticle = (id) => {
     setUserArticles((prev) => prev.filter((a) => a.id !== id))
+    setReadingRoomArticles((prev) => prev.filter((a) => a.id !== id))
   }
 
   // User Quotes (Shelf Passages)
@@ -694,9 +892,11 @@ function App() {
   const [currentPage, setCurrentPage] = useState(getPageFromHash)
   const [selectedArticleId, setSelectedArticleId] = useState(getInitialArticleId)
 
-  // Always derives from articlesData so edits in articles.js show immediately without losing view
+  // Derives from readingRoomArticles and articlesData
   const selectedArticle = selectedArticleId
-    ? (articlesData.find((a) => a.id === selectedArticleId || (selectedArticleId === 'ghost-on-your-bookshelf' && a.id === 'unread-bookshelf')) || null)
+    ? (readingRoomArticles.find((a) => a.id === selectedArticleId || (selectedArticleId === 'ghost-on-your-bookshelf' && a.id === 'unread-bookshelf'))
+       || articlesData.find((a) => a.id === selectedArticleId || (selectedArticleId === 'ghost-on-your-bookshelf' && a.id === 'unread-bookshelf'))
+       || null)
     : null
 
   const handleOpenArticle = (article) => {
@@ -2539,69 +2739,490 @@ function App() {
               <div className="editorial-page-hero">
                 <h1 className="editorial-page-title">The Reading Room</h1>
                 <p className="editorial-page-subtitle">
-                  Welcome to this quiet corner where some readers share about their reading experiences and how reading changed their life in a peaceful way.
+                  Welcome to this quiet corner where readers share thoughtful essays, book reflections, and published writings from Substack, Medium, and LinkedIn.
                 </p>
+                <div style={{ marginTop: '1.8rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                  <button
+                    className="btn-search-atelier"
+                    onClick={() => {
+                      setShowShareEssayForm(!showShareEssayForm)
+                      if (!essayAuthor) {
+                        setEssayAuthor(profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary')
+                      }
+                    }}
+                    style={{ padding: '0.8rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
+                  >
+                    {showShareEssayForm ? '✕ Close Form' : '✍️ Share an Essay or Article'}
+                  </button>
+                </div>
               </div>
 
-              <div className="articles-page-grid">
-                {articlesData.map((article) => (
-                  <article
-                    key={article.id}
-                    className="article-page-card"
-                    onClick={() => handleOpenArticle(article)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {article.coverImage && (
-                      <div className="article-card-cover-wrap">
-                        <img
-                          src={article.coverImage}
-                          alt={article.title}
-                          className="article-card-cover-img"
-                          style={article.coverPosition ? { objectPosition: article.coverPosition } : undefined}
-                          loading="lazy"
+              {/* Expandable Form: Share an Essay with Reading Room */}
+              {showShareEssayForm && (
+                <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '980px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.8rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1.2rem' }}>
+                    <div>
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', color: 'var(--forest-deep)', margin: 0 }}>
+                        ✍️ Share an Essay to The Reading Room
+                      </h3>
+                      <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0.4rem 0 0 0' }}>
+                        Paste a link to your Substack, Medium, or LinkedIn article. We will automatically fetch the cover image, title, and teaser.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowShareEssayForm(false)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        fontSize: '1.4rem',
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                        padding: '0.2rem 0.5rem'
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <form onSubmit={handlePublishReadingRoomEssay}>
+                    {/* URL Input with Auto-Fetch */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                        Article / Essay URL (Substack, Medium, or LinkedIn) *
+                      </label>
+                      <div style={{ display: 'flex', gap: '0.7rem' }}>
+                        <input
+                          type="url"
+                          required
+                          placeholder="https://yourname.substack.com/p/your-essay-title"
+                          value={essayUrl}
+                          onChange={(e) => setEssayUrl(e.target.value)}
+                          onPaste={(e) => {
+                            const pasted = e.clipboardData.getData('text')
+                            if (pasted) {
+                              setTimeout(() => fetchArticleMetadata(pasted), 50)
+                            }
+                          }}
+                          onBlur={() => {
+                            if (essayUrl && !essayTitle) {
+                              fetchArticleMetadata(essayUrl)
+                            }
+                          }}
+                          style={{
+                            flex: 1,
+                            padding: '0.75rem 1rem',
+                            borderRadius: '12px',
+                            border: '1.5px solid var(--border-warm)',
+                            background: 'var(--bg-surface-soft)',
+                            fontFamily: 'inherit',
+                            fontSize: '0.92rem'
+                          }}
                         />
+                        <button
+                          type="button"
+                          onClick={() => fetchArticleMetadata(essayUrl)}
+                          disabled={isFetchingPreview || !essayUrl.trim()}
+                          className="btn-search-atelier"
+                          style={{ padding: '0.75rem 1.4rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
+                        >
+                          {isFetchingPreview ? 'Fetching...' : '🔍 Fetch Preview'}
+                        </button>
+                      </div>
+
+                      {/* Fetch status notice */}
+                      {isFetchingPreview && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: 'var(--forest-deep)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span>⏳</span>
+                          <span>Fetching cover image and article details from {essayPlatform}...</span>
+                        </div>
+                      )}
+                      {previewFetchStatus === 'success' && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span>✨</span>
+                          <span>Cover image and article preview loaded! You can customize the details below.</span>
+                        </div>
+                      )}
+                      {previewFetchStatus === 'fallback' && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span>ℹ️</span>
+                          <span>Could not auto-fetch cover image. You can paste an image URL or use a default cover below.</span>
+                        </div>
+                      )}
+                      {previewFetchStatus === 'error' && previewErrorMsg && (
+                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: '#DC2626' }}>
+                          {previewErrorMsg}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Grid: Platform + Category + Author */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.2rem', marginBottom: '1.5rem' }}>
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                          Platform *
+                        </label>
+                        <select
+                          value={essayPlatform}
+                          onChange={(e) => setEssayPlatform(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.7rem 0.9rem',
+                            borderRadius: '10px',
+                            border: '1.5px solid var(--border-warm)',
+                            background: 'var(--bg-surface-soft)',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem'
+                          }}
+                        >
+                          <option value="Substack">Substack</option>
+                          <option value="Medium">Medium</option>
+                          <option value="LinkedIn">LinkedIn</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                          Category *
+                        </label>
+                        <select
+                          value={essayCategory}
+                          onChange={(e) => setEssayCategory(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.7rem 0.9rem',
+                            borderRadius: '10px',
+                            border: '1.5px solid var(--border-warm)',
+                            background: 'var(--bg-surface-soft)',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem'
+                          }}
+                        >
+                          <option value="READER PSYCHOLOGY & HABITS">Reader Psychology & Habits</option>
+                          <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
+                          <option value="PHILOSOPHY & MINDSET">Philosophy & Mindset</option>
+                          <option value="LIFE, MEMORY & STORIES">Life, Memory & Stories</option>
+                          <option value="WRITING & CREATIVE JOURNEY">Writing & Creative Journey</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                          Author Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="Your Name"
+                          value={essayAuthor}
+                          onChange={(e) => setEssayAuthor(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.7rem 0.9rem',
+                            borderRadius: '10px',
+                            border: '1.5px solid var(--border-warm)',
+                            background: 'var(--bg-surface-soft)',
+                            fontFamily: 'inherit',
+                            fontSize: '0.9rem'
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Title */}
+                    <div style={{ marginBottom: '1.2rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                        Article Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Why We Buy Books Faster Than We Read Them"
+                        value={essayTitle}
+                        onChange={(e) => setEssayTitle(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '12px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.92rem'
+                        }}
+                      />
+                    </div>
+
+                    {/* Teaser */}
+                    <div style={{ marginBottom: '1.2rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                        Teaser / Synopsis *
+                      </label>
+                      <textarea
+                        required
+                        rows={3}
+                        placeholder="A brief summary or excerpt that draws readers in..."
+                        value={essayTeaser}
+                        onChange={(e) => setEssayTeaser(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '12px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.92rem',
+                          resize: 'vertical',
+                          lineHeight: 1.5
+                        }}
+                      />
+                    </div>
+
+                    {/* Cover Image URL */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
+                        Cover Image URL (Auto-extracted or custom)
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://... (leave empty to use default literary cover)"
+                        value={essayCoverImage}
+                        onChange={(e) => setEssayCoverImage(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.7rem 0.9rem',
+                          borderRadius: '10px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.88rem'
+                        }}
+                      />
+                    </div>
+
+                    {/* Live Preview Card */}
+                    {(essayTitle || essayUrl) && (
+                      <div style={{ marginBottom: '2rem' }}>
+                        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.7rem' }}>
+                          Live Reading Room Card Preview:
+                        </div>
+                        <div className="article-page-card" style={{ pointerEvents: 'none', transform: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
+                          <div className="article-card-cover-wrap" style={{ minWidth: '240px', maxWidth: '240px', height: '180px' }}>
+                            <img
+                              src={essayCoverImage || '/articles/article1.jpeg'}
+                              alt="Preview"
+                              className="article-card-cover-img"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null
+                                e.currentTarget.src = '/articles/article1.jpeg'
+                              }}
+                            />
+                          </div>
+                          <div className="article-card-body-content" style={{ padding: '1.4rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                              <span className="article-category-badge">{essayCategory}</span>
+                              <span className={`article-platform-badge article-platform-${essayPlatform.toLowerCase()}`}>
+                                {essayPlatform}
+                              </span>
+                            </div>
+                            <h3 className="article-card-title" style={{ fontSize: '1.15rem', marginBottom: '0.4rem' }}>
+                              {essayTitle || 'Your Article Title'}
+                            </h3>
+                            <p className="article-card-teaser" style={{ fontSize: '0.85rem', marginBottom: '0.8rem', WebkitLineClamp: 2 }}>
+                              {essayTeaser || 'Your essay teaser will appear here...'}
+                            </p>
+                            <div className="article-card-footer" style={{ marginTop: 'auto', paddingTop: '0.6rem' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <img
+                                  src={currentAvatarSrc}
+                                  alt="Author"
+                                  style={{ width: '24px', height: '24px', borderRadius: '50%' }}
+                                />
+                                <span style={{ fontSize: '0.8rem', fontWeight: 600 }}>By {essayAuthor || profile?.full_name || 'Simran Chaudhary'}</span>
+                              </div>
+                              <span className="article-read-btn" style={{ fontSize: '0.8rem' }}>
+                                Read on {essayPlatform} ↗
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
 
-                    <div className="article-card-body-content">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem' }}>
-                        <span className="article-category-badge">{article.category}</span>
-                        {article.readTime && (
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>{article.readTime}</span>
-                        )}
-                      </div>
-
-                      <h3 className="article-card-title">
-                        {article.title}
-                      </h3>
-
-                      <p className="article-card-teaser">
-                        {article.teaser}
-                      </p>
-
-                      <div className="article-card-footer">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-                          <img
-                            src={getAuthorAvatar(article.author, article.avatar, article.gender)}
-                            alt={article.author}
-                            style={{
-                              width: '28px',
-                              height: '28px',
-                              borderRadius: '50%',
-                              objectFit: 'cover',
-                              border: '1.5px solid var(--border-warm)',
-                              background: 'var(--bg-surface-soft)',
-                              flexShrink: 0
-                            }}
-                          />
-                          <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark)' }}>By {article.author}</span>
-                        </div>
-                        <span className="article-read-btn">Read Full Article →</span>
-                      </div>
+                    {/* Buttons */}
+                    <div style={{ display: 'flex', gap: '0.9rem' }}>
+                      <button
+                        type="submit"
+                        className="btn-search-atelier"
+                        style={{ padding: '0.75rem 2rem', fontSize: '0.92rem', fontWeight: 700 }}
+                      >
+                        Publish to The Reading Room
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowShareEssayForm(false)}
+                        style={{
+                          background: 'transparent',
+                          border: '1px solid var(--border-warm)',
+                          padding: '0.75rem 1.4rem',
+                          borderRadius: '9999px',
+                          cursor: 'pointer',
+                          fontSize: '0.88rem'
+                        }}
+                      >
+                        Cancel
+                      </button>
                     </div>
-                  </article>
-                ))}
-              </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Empty State */}
+              {readingRoomArticles.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '4.5rem 1.5rem', background: 'var(--bg-surface)', borderRadius: '24px', border: '1px dashed var(--border-warm)', maxWidth: '980px', margin: '0 auto' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: '0.8rem' }}>✍️</div>
+                  <p style={{ fontFamily: 'var(--font-heading)', fontSize: '1.4rem', color: 'var(--forest-deep)', marginBottom: '0.5rem' }}>
+                    The Reading Room is quiet... for now.
+                  </p>
+                  <p style={{ fontSize: '0.92rem', color: 'var(--text-muted)', marginBottom: '1.5rem', maxWidth: '520px', margin: '0 auto 1.5rem auto' }}>
+                    Share your Substack newsletter, book reflections, or Medium essays with fellow readers!
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+                    <button
+                      className="btn-search-atelier"
+                      style={{ padding: '0.7rem 1.8rem', fontSize: '0.88rem' }}
+                      onClick={() => {
+                        setShowShareEssayForm(true)
+                        if (!essayAuthor) {
+                          setEssayAuthor(profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary')
+                        }
+                      }}
+                    >
+                      ✍️ Share an Essay
+                    </button>
+                    <button
+                      type="button"
+                      style={{ background: 'transparent', border: '1px solid var(--border-warm)', padding: '0.7rem 1.4rem', borderRadius: '9999px', cursor: 'pointer', fontSize: '0.85rem', color: 'var(--text-muted)' }}
+                      onClick={() => setReadingRoomArticles(articlesData)}
+                    >
+                      Restore Default Articles
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="articles-page-grid">
+                  {readingRoomArticles.map((article) => {
+                    const isExternal = Boolean(article.url)
+                    const platformName = article.platform || (isExternal ? 'Substack' : null)
+                    const canManage = article.author_id === user?.id || article.author === (profile?.full_name || 'Simran Chaudhary') || userArticles.some((a) => a.id === article.id)
+
+                    return (
+                      <article
+                        key={article.id}
+                        className="article-page-card"
+                        onClick={() => {
+                          if (isExternal) {
+                            window.open(article.url, '_blank', 'noopener,noreferrer')
+                          } else {
+                            handleOpenArticle(article)
+                          }
+                        }}
+                        style={{ cursor: 'pointer', position: 'relative' }}
+                      >
+                        {article.coverImage && (
+                          <div className="article-card-cover-wrap">
+                            <img
+                              src={article.coverImage}
+                              alt={article.title}
+                              className="article-card-cover-img"
+                              style={article.coverPosition ? { objectPosition: article.coverPosition } : undefined}
+                              loading="lazy"
+                              onError={(e) => {
+                                e.currentTarget.onerror = null
+                                e.currentTarget.src = '/articles/article1.jpeg'
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        <div className="article-card-body-content">
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.9rem', gap: '0.5rem', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                              <span className="article-category-badge">{article.category}</span>
+                              {platformName && (
+                                <span className={`article-platform-badge article-platform-${platformName.toLowerCase()}`}>
+                                  {platformName}
+                                </span>
+                              )}
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+                              {article.readTime && !platformName && (
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>{article.readTime}</span>
+                              )}
+                              {canManage && (
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (window.confirm('Are you sure you want to remove this essay from The Reading Room?')) {
+                                      handleDeleteReadingRoomArticle(article.id)
+                                    }
+                                  }}
+                                  className="article-delete-btn"
+                                  title="Remove essay from The Reading Room"
+                                >
+                                  ✕ Remove
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          <h3 className="article-card-title">
+                            {article.title}
+                          </h3>
+
+                          <p className="article-card-teaser">
+                            {article.teaser}
+                          </p>
+
+                          <div className="article-card-footer">
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                              <img
+                                src={getAuthorAvatar(article.author, article.avatar, article.gender)}
+                                alt={article.author}
+                                style={{
+                                  width: '28px',
+                                  height: '28px',
+                                  borderRadius: '50%',
+                                  objectFit: 'cover',
+                                  border: '1.5px solid var(--border-warm)',
+                                  background: 'var(--bg-surface-soft)',
+                                  flexShrink: 0
+                                }}
+                              />
+                              <span style={{ fontSize: '0.84rem', fontWeight: 600, color: 'var(--text-dark)' }}>By {article.author}</span>
+                            </div>
+
+                            {isExternal ? (
+                              <a
+                                href={article.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="article-read-btn"
+                                onClick={(e) => e.stopPropagation()}
+                                style={{ textDecoration: 'none' }}
+                              >
+                                Read on {platformName} ↗
+                              </a>
+                            ) : (
+                              <span className="article-read-btn">Read Full Article →</span>
+                            )}
+                          </div>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
             </>
           ) : (
             <div className="article-reader-container">
@@ -2669,7 +3290,8 @@ function App() {
               )}
 
               <div className="article-reader-body">
-                {selectedArticle.content.map((block, idx) => {
+                {Array.isArray(selectedArticle.content) && selectedArticle.content.length > 0 ? (
+                  selectedArticle.content.map((block, idx) => {
                   if (block.type === 'lead') {
                     return <p key={idx} className="article-body-lead">{renderFormattedText(block.text)}</p>
                   }
@@ -2767,7 +3389,26 @@ function App() {
                     )
                   }
                   return <p key={idx} className="article-body-p">{renderFormattedText(block.text)}</p>
-                })}
+                })
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '3.5rem 1.5rem', background: 'var(--bg-surface-soft)', borderRadius: '24px', border: '1.5px solid var(--border-warm)', margin: '2rem 0' }}>
+                    <p style={{ fontSize: '1.15rem', lineHeight: 1.7, color: 'var(--text-dark)', maxWidth: '680px', margin: '0 auto 2rem auto', fontStyle: 'italic' }}>
+                      "{selectedArticle.teaser}"
+                    </p>
+                    {selectedArticle.url && (
+                      <a
+                        href={selectedArticle.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-search-atelier"
+                        style={{ padding: '0.85rem 2.4rem', fontSize: '0.96rem', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                      >
+                        <span>Read Full Essay on {selectedArticle.platform || 'Substack'}</span>
+                        <span>↗</span>
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Reader Bottom Actions & Discovery */}
@@ -3400,8 +4041,6 @@ function App() {
                             <option value="Substack">Substack</option>
                             <option value="Medium">Medium</option>
                             <option value="LinkedIn">LinkedIn</option>
-                            <option value="Personal Blog">Personal Blog</option>
-                            <option value="Essay">Essay</option>
                           </select>
                         </div>
                       </div>
