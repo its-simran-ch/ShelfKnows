@@ -2772,7 +2772,16 @@ function App() {
                 <p className="editorial-page-subtitle">
                   Welcome to this quiet corner where some readers share about their reading experiences and how reading changed their life in a peaceful way.
                 </p>
-                <div style={{ marginTop: '1.8rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ marginTop: '2.1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                  <p style={{
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: '1.12rem',
+                    fontStyle: 'italic',
+                    color: 'var(--forest-deep)',
+                    margin: 0
+                  }}>
+                    Have a reading story to tell?
+                  </p>
                   <button
                     className="btn-search-atelier"
                     onClick={() => {
@@ -2781,9 +2790,9 @@ function App() {
                         setEssayAuthor(profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary')
                       }
                     }}
-                    style={{ padding: '0.8rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
+                    style={{ padding: '0.8rem 2.4rem', fontSize: '0.94rem', fontWeight: 700 }}
                   >
-                    {showShareEssayForm ? '✕ Close Form' : '+ Have a Reading Story to Tell?'}
+                    {showShareEssayForm ? '✕ Close Form' : 'Share Your Story →'}
                   </button>
                 </div>
               </div>
@@ -3055,7 +3064,7 @@ function App() {
                         }
                       }}
                     >
-                      + Have a Reading Story to Tell?
+                      Share Your Story →
                     </button>
                     <button
                       type="button"
