@@ -2824,7 +2824,7 @@ function App() {
                     lineHeight: 1.6,
                     margin: '0 0 1.5rem 0'
                   }}>
-                    Reading Room Sanctuary: This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
+                    <strong style={{ color: 'var(--text-dark)', fontWeight: 700 }}>Reading Room Sanctuary:</strong> This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
                   </p>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
@@ -2838,12 +2838,21 @@ function App() {
                         onChange={(e) => setEssayCategory(e.target.value)}
                         style={{
                           width: '100%',
-                          padding: '0.75rem 0.95rem',
+                          maxWidth: '380px',
+                          padding: '0.75rem 2.5rem 0.75rem 1rem',
                           borderRadius: '12px',
                           border: '1.5px solid var(--border-warm)',
                           background: 'var(--bg-surface-soft)',
                           fontFamily: 'inherit',
-                          fontSize: '0.9rem'
+                          fontSize: '0.9rem',
+                          color: 'var(--text-dark)',
+                          cursor: 'pointer',
+                          appearance: 'none',
+                          WebkitAppearance: 'none',
+                          backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D3748' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 0.9rem center',
+                          backgroundSize: '1.1rem'
                         }}
                       >
                         <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
