@@ -387,11 +387,21 @@ function App() {
 
   const handlePublishReadingRoomEssay = (e) => {
     e.preventDefault()
-    if (!essayUrl.trim() || !essayTitle.trim()) return
+    if (!essayUrl.trim()) return
 
     let finalUrl = essayUrl.trim()
     if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
       finalUrl = 'https://' + finalUrl
+    }
+
+    let finalTitle = essayTitle.trim()
+    if (!finalTitle) {
+      if (finalUrl.includes('/p/')) {
+        const slug = finalUrl.split('/p/')[1].split('?')[0].replace(/[-_]/g, ' ')
+        finalTitle = slug.charAt(0).toUpperCase() + slug.slice(1)
+      } else {
+        finalTitle = 'Book Essay & Reflections'
+      }
     }
 
     const authorDisplayName = essayAuthor.trim() || profile?.full_name || user?.user_metadata?.full_name || 'Simran Chaudhary'
@@ -399,12 +409,12 @@ function App() {
 
     const newArticle = {
       id: newId,
-      title: essayTitle.trim(),
+      title: finalTitle,
       url: finalUrl,
       platform: essayPlatform || 'Substack',
       category: essayCategory || 'READER PSYCHOLOGY & HABITS',
       coverImage: essayCoverImage.trim() || '/articles/article1.jpeg',
-      teaser: essayTeaser.trim() || 'A thoughtful essay shared with readers.',
+      teaser: essayTeaser.trim() || `A thoughtful essay shared by ${authorDisplayName} on ${essayPlatform || 'Substack'}.`,
       author: authorDisplayName,
       avatar: currentAvatarSrc,
       gender: userAvatar,
@@ -2759,19 +2769,26 @@ function App() {
 
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
-                <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '980px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.8rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1.2rem' }}>
+                <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
                     <div>
-                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', color: 'var(--forest-deep)', margin: 0 }}>
+                      <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
                         ✍️ Share an Essay to The Reading Room
                       </h3>
-                      <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', margin: '0.4rem 0 0 0' }}>
-                        Paste a link to your Substack, Medium, or LinkedIn article. We will automatically fetch the cover image, title, and teaser.
+                      <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0.35rem 0 0 0' }}>
+                        Paste your Substack, Medium, or LinkedIn article link. We automatically extract the cover image, title, and teaser for The Reading Room!
                       </p>
                     </div>
                     <button
                       type="button"
-                      onClick={() => setShowShareEssayForm(false)}
+                      onClick={() => {
+                        setShowShareEssayForm(false)
+                        setEssayUrl('')
+                        setEssayTitle('')
+                        setEssayTeaser('')
+                        setEssayCoverImage('')
+                        setPreviewFetchStatus(null)
+                      }}
                       style={{
                         background: 'none',
                         border: 'none',
@@ -2786,116 +2803,76 @@ function App() {
                   </div>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
-                    {/* URL Input with Auto-Fetch */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                        Article / Essay URL (Substack, Medium, or LinkedIn) *
-                      </label>
-                      <div style={{ display: 'flex', gap: '0.7rem' }}>
-                        <input
-                          type="url"
-                          required
-                          placeholder="https://yourname.substack.com/p/your-essay-title"
-                          value={essayUrl}
-                          onChange={(e) => setEssayUrl(e.target.value)}
-                          onPaste={(e) => {
-                            const pasted = e.clipboardData.getData('text')
-                            if (pasted) {
-                              setTimeout(() => fetchArticleMetadata(pasted), 50)
-                            }
-                          }}
-                          onBlur={() => {
-                            if (essayUrl && !essayTitle) {
-                              fetchArticleMetadata(essayUrl)
-                            }
-                          }}
-                          style={{
-                            flex: 1,
-                            padding: '0.75rem 1rem',
-                            borderRadius: '12px',
-                            border: '1.5px solid var(--border-warm)',
-                            background: 'var(--bg-surface-soft)',
-                            fontFamily: 'inherit',
-                            fontSize: '0.92rem'
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => fetchArticleMetadata(essayUrl)}
-                          disabled={isFetchingPreview || !essayUrl.trim()}
-                          className="btn-search-atelier"
-                          style={{ padding: '0.75rem 1.4rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
-                        >
-                          {isFetchingPreview ? 'Fetching...' : '🔍 Fetch Preview'}
-                        </button>
-                      </div>
-
-                      {/* Fetch status notice */}
-                      {isFetchingPreview && (
-                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: 'var(--forest-deep)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <span>⏳</span>
-                          <span>Fetching cover image and article details from {essayPlatform}...</span>
-                        </div>
-                      )}
-                      {previewFetchStatus === 'success' && (
-                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <span>✨</span>
-                          <span>Cover image and article preview loaded! You can customize the details below.</span>
-                        </div>
-                      )}
-                      {previewFetchStatus === 'fallback' && (
-                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                          <span>ℹ️</span>
-                          <span>Could not auto-fetch cover image. You can paste an image URL or use a default cover below.</span>
-                        </div>
-                      )}
-                      {previewFetchStatus === 'error' && previewErrorMsg && (
-                        <div style={{ marginTop: '0.6rem', fontSize: '0.82rem', color: '#DC2626' }}>
-                          {previewErrorMsg}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Grid: Platform + Category + Author */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.2rem', marginBottom: '1.5rem' }}>
+                    {/* URL + Category Row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(200px, 1fr)', gap: '1rem', marginBottom: '1.2rem' }}>
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                          Platform *
+                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                          Article URL (Substack, Medium, or LinkedIn) *
                         </label>
-                        <select
-                          value={essayPlatform}
-                          onChange={(e) => setEssayPlatform(e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '0.7rem 0.9rem',
-                            borderRadius: '10px',
-                            border: '1.5px solid var(--border-warm)',
-                            background: 'var(--bg-surface-soft)',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem'
-                          }}
-                        >
-                          <option value="Substack">Substack</option>
-                          <option value="Medium">Medium</option>
-                          <option value="LinkedIn">LinkedIn</option>
-                        </select>
+                        <div style={{ display: 'flex', gap: '0.6rem' }}>
+                          <input
+                            type="url"
+                            required
+                            placeholder="https://yourname.substack.com/p/your-essay-title"
+                            value={essayUrl}
+                            onChange={(e) => {
+                              const val = e.target.value
+                              setEssayUrl(val)
+                              if (val.trim().length > 10 && !isFetchingPreview) {
+                                clearTimeout(window._essayFetchTimer)
+                                window._essayFetchTimer = setTimeout(() => {
+                                  fetchArticleMetadata(val)
+                                }, 600)
+                              }
+                            }}
+                            onPaste={(e) => {
+                              const pasted = e.clipboardData.getData('text')
+                              if (pasted) {
+                                setTimeout(() => fetchArticleMetadata(pasted), 50)
+                              }
+                            }}
+                            onBlur={() => {
+                              if (essayUrl && !essayTitle) {
+                                fetchArticleMetadata(essayUrl)
+                              }
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: '0.75rem 1rem',
+                              borderRadius: '12px',
+                              border: '1.5px solid var(--border-warm)',
+                              background: 'var(--bg-surface-soft)',
+                              fontFamily: 'inherit',
+                              fontSize: '0.92rem'
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => fetchArticleMetadata(essayUrl)}
+                            disabled={isFetchingPreview || !essayUrl.trim()}
+                            className="btn-search-atelier"
+                            style={{ padding: '0.75rem 1.3rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
+                          >
+                            {isFetchingPreview ? 'Fetching...' : '🔍 Fetch Preview'}
+                          </button>
+                        </div>
                       </div>
 
                       <div>
-                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                          Category *
+                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
+                          Category / Shelf
                         </label>
                         <select
                           value={essayCategory}
                           onChange={(e) => setEssayCategory(e.target.value)}
                           style={{
                             width: '100%',
-                            padding: '0.7rem 0.9rem',
-                            borderRadius: '10px',
+                            padding: '0.75rem 0.9rem',
+                            borderRadius: '12px',
                             border: '1.5px solid var(--border-warm)',
                             background: 'var(--bg-surface-soft)',
                             fontFamily: 'inherit',
-                            fontSize: '0.9rem'
+                            fontSize: '0.88rem'
                           }}
                         >
                           <option value="READER PSYCHOLOGY & HABITS">Reader Psychology & Habits</option>
@@ -2905,106 +2882,31 @@ function App() {
                           <option value="WRITING & CREATIVE JOURNEY">Writing & Creative Journey</option>
                         </select>
                       </div>
+                    </div>
 
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                          Author Name *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Your Name"
-                          value={essayAuthor}
-                          onChange={(e) => setEssayAuthor(e.target.value)}
-                          style={{
-                            width: '100%',
-                            padding: '0.7rem 0.9rem',
-                            borderRadius: '10px',
-                            border: '1.5px solid var(--border-warm)',
-                            background: 'var(--bg-surface-soft)',
-                            fontFamily: 'inherit',
-                            fontSize: '0.9rem'
-                          }}
-                        />
+                    {/* Fetch Status Messages */}
+                    {isFetchingPreview && (
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--forest-deep)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span>⏳</span>
+                        <span>Extracting cover image, title & synopsis from {essayPlatform}...</span>
                       </div>
-                    </div>
-
-                    {/* Title */}
-                    <div style={{ marginBottom: '1.2rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                        Article Title *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Why We Buy Books Faster Than We Read Them"
-                        value={essayTitle}
-                        onChange={(e) => setEssayTitle(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          borderRadius: '12px',
-                          border: '1.5px solid var(--border-warm)',
-                          background: 'var(--bg-surface-soft)',
-                          fontFamily: 'inherit',
-                          fontSize: '0.92rem'
-                        }}
-                      />
-                    </div>
-
-                    {/* Teaser */}
-                    <div style={{ marginBottom: '1.2rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                        Teaser / Synopsis *
-                      </label>
-                      <textarea
-                        required
-                        rows={3}
-                        placeholder="A brief summary or excerpt that draws readers in..."
-                        value={essayTeaser}
-                        onChange={(e) => setEssayTeaser(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '0.75rem 1rem',
-                          borderRadius: '12px',
-                          border: '1.5px solid var(--border-warm)',
-                          background: 'var(--bg-surface-soft)',
-                          fontFamily: 'inherit',
-                          fontSize: '0.92rem',
-                          resize: 'vertical',
-                          lineHeight: 1.5
-                        }}
-                      />
-                    </div>
-
-                    {/* Cover Image URL */}
-                    <div style={{ marginBottom: '1.5rem' }}>
-                      <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.35rem' }}>
-                        Cover Image URL (Auto-extracted or custom)
-                      </label>
-                      <input
-                        type="url"
-                        placeholder="https://... (leave empty to use default literary cover)"
-                        value={essayCoverImage}
-                        onChange={(e) => setEssayCoverImage(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '0.7rem 0.9rem',
-                          borderRadius: '10px',
-                          border: '1.5px solid var(--border-warm)',
-                          background: 'var(--bg-surface-soft)',
-                          fontFamily: 'inherit',
-                          fontSize: '0.88rem'
-                        }}
-                      />
-                    </div>
+                    )}
+                    {previewFetchStatus === 'success' && (
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span>✨</span>
+                        <span>Cover image and details extracted automatically! Here is how your card will appear:</span>
+                      </div>
+                    )}
+                    {previewFetchStatus === 'fallback' && (
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <span>ℹ️</span>
+                        <span>Article recognized on {essayPlatform}. Card preview generated below:</span>
+                      </div>
+                    )}
 
                     {/* Live Preview Card */}
                     {(essayTitle || essayUrl) && (
-                      <div style={{ marginBottom: '2rem' }}>
-                        <div style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.7rem' }}>
-                          Live Reading Room Card Preview:
-                        </div>
+                      <div style={{ marginBottom: '1.8rem' }}>
                         <div className="article-page-card" style={{ pointerEvents: 'none', transform: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
                           <div className="article-card-cover-wrap" style={{ minWidth: '240px', maxWidth: '240px', height: '180px' }}>
                             <img
@@ -3048,18 +2950,32 @@ function App() {
                       </div>
                     )}
 
-                    {/* Buttons */}
-                    <div style={{ display: 'flex', gap: '0.9rem' }}>
+                    {/* Action Buttons */}
+                    <div style={{ display: 'flex', gap: '0.9rem', alignItems: 'center' }}>
                       <button
                         type="submit"
                         className="btn-search-atelier"
-                        style={{ padding: '0.75rem 2rem', fontSize: '0.92rem', fontWeight: 700 }}
+                        disabled={!essayUrl.trim() || isFetchingPreview}
+                        style={{
+                          padding: '0.75rem 2.2rem',
+                          fontSize: '0.92rem',
+                          fontWeight: 700,
+                          opacity: !essayUrl.trim() || isFetchingPreview ? 0.6 : 1,
+                          cursor: !essayUrl.trim() || isFetchingPreview ? 'not-allowed' : 'pointer'
+                        }}
                       >
                         Publish to The Reading Room
                       </button>
                       <button
                         type="button"
-                        onClick={() => setShowShareEssayForm(false)}
+                        onClick={() => {
+                          setShowShareEssayForm(false)
+                          setEssayUrl('')
+                          setEssayTitle('')
+                          setEssayTeaser('')
+                          setEssayCoverImage('')
+                          setPreviewFetchStatus(null)
+                        }}
                         style={{
                           background: 'transparent',
                           border: '1px solid var(--border-warm)',
