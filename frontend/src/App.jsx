@@ -2783,7 +2783,7 @@ function App() {
                     }}
                     style={{ padding: '0.8rem 2.4rem', fontSize: '0.94rem', fontWeight: 700 }}
                   >
-                    {showShareEssayForm ? '✕ Close Form' : 'Share it with us →'}
+                    {showShareEssayForm ? '✕ Close Form' : 'Share it with your fellow readers →'}
                   </button>
                 </div>
               </div>
@@ -3020,7 +3020,7 @@ function App() {
                         }
                       }}
                     >
-                      Share it with us →
+                      Share it with your fellow readers →
                     </button>
                     <button
                       type="button"
