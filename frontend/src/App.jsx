@@ -2822,15 +2822,19 @@ function App() {
                     </button>
                   </div>
 
-                  {/* Sanctuary Editorial Note (Normal text, not a callout box) */}
-                  <p style={{
-                    fontSize: '0.88rem',
-                    color: 'var(--text-muted)',
+                  {/* Sanctuary Editorial Note (Substack-style soft rounded box) */}
+                  <div style={{
+                    background: '#EEEEEE',
+                    borderRadius: '10px',
+                    padding: '1.1rem 1.4rem',
+                    marginBottom: '1.5rem',
+                    fontSize: '0.9rem',
                     lineHeight: 1.6,
-                    margin: '0 0 1.5rem 0'
+                    color: '#363737'
                   }}>
-                    <strong style={{ color: 'var(--text-dark)', fontWeight: 700 }}>Reading Room Sanctuary:</strong> This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
-                  </p>
+                    <strong style={{ color: '#1B1B18', fontWeight: 700 }}>Reading Room Sanctuary:</strong>{' '}
+                    This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
+                  </div>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
                     {/* 1. Literary Category / Shelf */}
