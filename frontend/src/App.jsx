@@ -2772,15 +2772,17 @@ function App() {
                 <p className="editorial-page-subtitle">
                   Welcome to this quiet corner where some readers share about their reading experiences and how reading changed their life in a peaceful way.
                 </p>
-                <div style={{ marginTop: '2.1rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', maxWidth: '680px', margin: '2rem auto 0 auto' }}>
                   <p style={{
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: '1.12rem',
-                    fontStyle: 'italic',
+                    fontSize: '1rem',
                     color: 'var(--forest-deep)',
-                    margin: 0
+                    lineHeight: 1.6,
+                    fontStyle: 'italic',
+                    fontFamily: 'var(--font-heading)',
+                    margin: 0,
+                    textAlign: 'center'
                   }}>
-                    Have a reading story to tell?
+                    If you write about your reading experiences and how books have shaped your life, your perspective, or the way you see the world—we would love to read your words here too.
                   </p>
                   <button
                     className="btn-search-atelier"
@@ -2800,7 +2802,7 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
                         Share Your Reading Stories with Us ❤️
@@ -2830,16 +2832,6 @@ function App() {
                       ✕
                     </button>
                   </div>
-
-                  {/* Reader Community Invitation Note */}
-                  <p style={{
-                    fontSize: '0.88rem',
-                    color: 'var(--text-muted)',
-                    lineHeight: 1.6,
-                    margin: '0 0 1.5rem 0'
-                  }}>
-                    If you write about your reading experiences and how books have shaped your life, your perspective, or the way you see the world—we would love to read your words here too.
-                  </p>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
                     {/* 1. Literary Category / Shelf */}
