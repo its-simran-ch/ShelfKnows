@@ -2843,7 +2843,7 @@ function App() {
                       <input
                         type="url"
                         required
-                        placeholder="https://yourname.substack.com/p/your-essay-title"
+                        placeholder="Paste your article URL here..."
                         value={essayUrl}
                         onChange={(e) => {
                           const val = e.target.value
