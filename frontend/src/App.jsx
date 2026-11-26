@@ -2809,7 +2809,6 @@ function App() {
                         onChange={(e) => setEssayCategory(e.target.value)}
                         style={{
                           width: '100%',
-                          maxWidth: '380px',
                           padding: '0.75rem 2.5rem 0.75rem 1rem',
                           borderRadius: '12px',
                           border: '1.5px solid var(--border-warm)',
