@@ -385,7 +385,7 @@ function App() {
         ]
         const foundSpam = spamKeywords.find((kw) => textToCheck.includes(kw))
         if (foundSpam) {
-          setRelevanceWarning(`⚠️ This essay appears to mention "${foundSpam}". A gentle reminder: The Reading Room is a quiet sanctuary exclusively for books, literature, reading habits, and personal reflections.`)
+          setRelevanceWarning(`This essay appears to mention "${foundSpam}". Please note that The Reading Room is dedicated exclusively to books, literature, reading habits, and personal reflections.`)
         } else {
           setRelevanceWarning('')
         }
@@ -2779,7 +2779,7 @@ function App() {
                     }}
                     style={{ padding: '0.8rem 2.2rem', fontSize: '0.94rem', fontWeight: 700 }}
                   >
-                    {showShareEssayForm ? '✕ Close Form' : '✍️ Share an Essay or Article'}
+                    {showShareEssayForm ? '✕ Close Form' : 'Share an Essay or Article'}
                   </button>
                 </div>
               </div>
@@ -2787,10 +2787,10 @@ function App() {
               {/* Expandable Form: Share an Essay with Reading Room */}
               {showShareEssayForm && (
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
                     <div>
                       <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                        ✍️ Share Your Writing with the Reading Community
+                        Share Your Writing with the Reading Community
                       </h3>
                     </div>
                     <button
@@ -2817,99 +2817,90 @@ function App() {
                     </button>
                   </div>
 
-                  {/* Sanctuary Editorial Note */}
-                  <div style={{
-                    background: 'rgba(217, 131, 36, 0.08)',
-                    borderLeft: '3.5px solid var(--warm-gold, #D98324)',
-                    padding: '0.75rem 1rem',
-                    borderRadius: '0 10px 10px 0',
-                    marginBottom: '1.4rem',
-                    fontSize: '0.84rem',
-                    lineHeight: 1.55,
-                    color: 'var(--text-dark)'
-                  }}>
-                    <strong>🌿 Reading Room Sanctuary:</strong> This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
-                  </div>
+                  {/* Normal text (no quote box, no emojis) */}
+                  <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', lineHeight: 1.6, margin: '0 0 1.6rem 0' }}>
+                    This quiet space is reserved exclusively for books, authors, reading habits, and personal reader reflections. Please only share essays connected to the world of books.
+                  </p>
 
                   <form onSubmit={handlePublishReadingRoomEssay}>
-                    {/* URL + Category Row */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.8fr) minmax(230px, 1fr)', gap: '1rem', marginBottom: '1.2rem' }}>
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                          Article URL (Substack, Medium, or LinkedIn) *
-                        </label>
-                        <div style={{ display: 'flex', gap: '0.6rem' }}>
-                          <input
-                            type="url"
-                            required
-                            placeholder="https://yourname.substack.com/p/your-essay-title"
-                            value={essayUrl}
-                            onChange={(e) => {
-                              const val = e.target.value
-                              setEssayUrl(val)
-                              if (val.trim().length > 10 && !isFetchingPreview) {
-                                clearTimeout(window._essayFetchTimer)
-                                window._essayFetchTimer = setTimeout(() => {
-                                  fetchArticleMetadata(val)
-                                }, 600)
-                              }
-                            }}
-                            onPaste={(e) => {
-                              const pasted = e.clipboardData.getData('text')
-                              if (pasted) {
-                                setTimeout(() => fetchArticleMetadata(pasted), 50)
-                              }
-                            }}
-                            onBlur={() => {
-                              if (essayUrl && !essayTitle) {
-                                fetchArticleMetadata(essayUrl)
-                              }
-                            }}
-                            style={{
-                              flex: 1,
-                              padding: '0.75rem 1rem',
-                              borderRadius: '12px',
-                              border: '1.5px solid var(--border-warm)',
-                              background: 'var(--bg-surface-soft)',
-                              fontFamily: 'inherit',
-                              fontSize: '0.92rem'
-                            }}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => fetchArticleMetadata(essayUrl)}
-                            disabled={isFetchingPreview || !essayUrl.trim()}
-                            className="btn-search-atelier"
-                            style={{ padding: '0.75rem 1.3rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
-                          >
-                            {isFetchingPreview ? 'Fetching...' : '🔍 Fetch Preview'}
-                          </button>
-                        </div>
-                      </div>
+                    {/* Row 1: Category label + Dropdown side-by-side */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', marginBottom: '1.4rem', flexWrap: 'wrap' }}>
+                      <label style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', minWidth: '210px' }}>
+                        Literary Category / Shelf *
+                      </label>
+                      <select
+                        value={essayCategory}
+                        onChange={(e) => setEssayCategory(e.target.value)}
+                        style={{
+                          flex: 1,
+                          minWidth: '240px',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '12px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.9rem'
+                        }}
+                      >
+                        <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
+                        <option value="READING HABITS & PSYCHOLOGY">Reading Habits & Psychology</option>
+                        <option value="AUTHOR DEEP DIVES & LITERARY LORE">Author Deep Dives & Lore</option>
+                        <option value="BOOKS THAT CHANGED MY LIFE">Books That Changed My Life</option>
+                        <option value="THE READING LIFE & PHILOSOPHY">The Reading Life & Philosophy</option>
+                      </select>
+                    </div>
 
-                      <div>
-                        <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                          Literary Category / Shelf *
-                        </label>
-                        <select
-                          value={essayCategory}
-                          onChange={(e) => setEssayCategory(e.target.value)}
+                    {/* Row 2: URL Label on top, then Input + Fetch Preview button side-by-side */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
+                        Article URL (Substack, Medium, or LinkedIn) *
+                      </label>
+                      <div style={{ display: 'flex', gap: '0.6rem' }}>
+                        <input
+                          type="url"
+                          required
+                          placeholder="https://yourname.substack.com/p/your-essay-title"
+                          value={essayUrl}
+                          onChange={(e) => {
+                            const val = e.target.value
+                            setEssayUrl(val)
+                            if (val.trim().length > 10 && !isFetchingPreview) {
+                              clearTimeout(window._essayFetchTimer)
+                              window._essayFetchTimer = setTimeout(() => {
+                                fetchArticleMetadata(val)
+                              }, 600)
+                            }
+                          }}
+                          onPaste={(e) => {
+                            const pasted = e.clipboardData.getData('text')
+                            if (pasted) {
+                              setTimeout(() => fetchArticleMetadata(pasted), 50)
+                            }
+                          }}
+                          onBlur={() => {
+                            if (essayUrl && !essayTitle) {
+                              fetchArticleMetadata(essayUrl)
+                            }
+                          }}
                           style={{
-                            width: '100%',
-                            padding: '0.75rem 0.9rem',
+                            flex: 1,
+                            padding: '0.75rem 1rem',
                             borderRadius: '12px',
                             border: '1.5px solid var(--border-warm)',
                             background: 'var(--bg-surface-soft)',
                             fontFamily: 'inherit',
-                            fontSize: '0.88rem'
+                            fontSize: '0.92rem'
                           }}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => fetchArticleMetadata(essayUrl)}
+                          disabled={isFetchingPreview || !essayUrl.trim()}
+                          className="btn-search-atelier"
+                          style={{ padding: '0.75rem 1.4rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
                         >
-                          <option value="BOOK REFLECTIONS & REVIEWS">📖 Book Reflections & Reviews</option>
-                          <option value="READING HABITS & PSYCHOLOGY">🧠 Reading Habits & Psychology</option>
-                          <option value="AUTHOR DEEP DIVES & LITERARY LORE">✍️ Author Deep Dives & Lore</option>
-                          <option value="BOOKS THAT CHANGED MY LIFE">🌿 Books That Changed My Life</option>
-                          <option value="THE READING LIFE & PHILOSOPHY">☕ The Reading Life & Philosophy</option>
-                        </select>
+                          {isFetchingPreview ? 'Fetching...' : 'Fetch Preview'}
+                        </button>
                       </div>
                     </div>
 
@@ -2929,23 +2920,20 @@ function App() {
                       </div>
                     )}
 
-                    {/* Fetch Status Messages */}
+                    {/* Fetch Status Messages (no emojis) */}
                     {isFetchingPreview && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--forest-deep)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <span>⏳</span>
-                        <span>Extracting cover image, title & synopsis from {essayPlatform}...</span>
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--forest-deep)' }}>
+                        Extracting cover image, title, and synopsis from {essayPlatform}...
                       </div>
                     )}
                     {previewFetchStatus === 'success' && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: '#059669', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <span>✨</span>
-                        <span>Cover image and details extracted automatically! Here is how your card will appear:</span>
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: '#059669' }}>
+                        Cover image and details extracted automatically. Card preview generated below:
                       </div>
                     )}
                     {previewFetchStatus === 'fallback' && (
-                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <span>ℹ️</span>
-                        <span>Article recognized on {essayPlatform}. Card preview generated below:</span>
+                      <div style={{ marginBottom: '1.2rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+                        Article recognized on {essayPlatform}. Card preview generated below:
                       </div>
                     )}
 
