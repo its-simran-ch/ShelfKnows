@@ -2870,58 +2870,47 @@ function App() {
                       </select>
                     </div>
 
-                    {/* 2. Article URL + Fetch Preview Button */}
+                    {/* 2. Article URL */}
                     <div style={{ marginBottom: '1.3rem' }}>
                       <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: '0.45rem' }}>
                         Article URL (Substack, Medium, or LinkedIn) *
                       </label>
-                      <div style={{ display: 'flex', gap: '0.65rem' }}>
-                        <input
-                          type="url"
-                          required
-                          placeholder="https://yourname.substack.com/p/your-essay-title"
-                          value={essayUrl}
-                          onChange={(e) => {
-                            const val = e.target.value
-                            setEssayUrl(val)
-                            if (val.trim().length > 10 && !isFetchingPreview) {
-                              clearTimeout(window._essayFetchTimer)
-                              window._essayFetchTimer = setTimeout(() => {
-                                fetchArticleMetadata(val)
-                              }, 600)
-                            }
-                          }}
-                          onPaste={(e) => {
-                            const pasted = e.clipboardData.getData('text')
-                            if (pasted) {
-                              setTimeout(() => fetchArticleMetadata(pasted), 50)
-                            }
-                          }}
-                          onBlur={() => {
-                            if (essayUrl && !essayTitle) {
-                              fetchArticleMetadata(essayUrl)
-                            }
-                          }}
-                          style={{
-                            flex: 1,
-                            padding: '0.75rem 1rem',
-                            borderRadius: '12px',
-                            border: '1.5px solid var(--border-warm)',
-                            background: 'var(--bg-surface-soft)',
-                            fontFamily: 'inherit',
-                            fontSize: '0.92rem'
-                          }}
-                        />
-                        <button
-                          type="button"
-                          onClick={() => fetchArticleMetadata(essayUrl)}
-                          disabled={isFetchingPreview || !essayUrl.trim()}
-                          className="btn-search-atelier"
-                          style={{ padding: '0.75rem 1.4rem', fontSize: '0.86rem', whiteSpace: 'nowrap', opacity: isFetchingPreview || !essayUrl.trim() ? 0.6 : 1 }}
-                        >
-                          {isFetchingPreview ? 'Fetching...' : 'Fetch Preview'}
-                        </button>
-                      </div>
+                      <input
+                        type="url"
+                        required
+                        placeholder="https://yourname.substack.com/p/your-essay-title"
+                        value={essayUrl}
+                        onChange={(e) => {
+                          const val = e.target.value
+                          setEssayUrl(val)
+                          if (val.trim().length > 10 && !isFetchingPreview) {
+                            clearTimeout(window._essayFetchTimer)
+                            window._essayFetchTimer = setTimeout(() => {
+                              fetchArticleMetadata(val)
+                            }, 600)
+                          }
+                        }}
+                        onPaste={(e) => {
+                          const pasted = e.clipboardData.getData('text')
+                          if (pasted) {
+                            setTimeout(() => fetchArticleMetadata(pasted), 50)
+                          }
+                        }}
+                        onBlur={() => {
+                          if (essayUrl && !essayTitle) {
+                            fetchArticleMetadata(essayUrl)
+                          }
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 1rem',
+                          borderRadius: '12px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.92rem'
+                        }}
+                      />
                     </div>
 
                     {/* Relevance Warning Notice */}
