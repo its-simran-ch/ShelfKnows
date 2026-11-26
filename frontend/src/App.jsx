@@ -2961,7 +2961,7 @@ function App() {
                     {(essayTitle || essayUrl) && (
                       <div style={{ marginBottom: '1.8rem' }}>
                         <div className="article-page-card" style={{ pointerEvents: 'none', transform: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.06)' }}>
-                          <div className="article-card-cover-wrap" style={{ minWidth: '240px', maxWidth: '240px', height: '180px' }}>
+                          <div className="article-card-cover-wrap" style={{ width: '100%', minWidth: '100%', maxWidth: '100%', height: '220px' }}>
                             <img
                               src={essayCoverImage || '/articles/article1.jpeg'}
                               alt="Preview"
