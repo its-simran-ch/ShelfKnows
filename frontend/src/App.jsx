@@ -20,6 +20,17 @@ const COMMUNITY_GENRES = [
   'Other'
 ]
 
+const READING_ROOM_CATEGORIES = [
+  'Book Reflections & Reviews',
+  'Reading Habits & Psychology',
+  'Author Deep Dives & Stories',
+  'Books That Changed My Life',
+  'The Reading Life & Philosophy',
+  'Curated Lists & Reading Guides',
+  'Science, Mind & Wellness',
+  'Ideas, Society & Culture'
+]
+
 const getCommentThreads = (comments = []) => {
   const topLevel = []
   const repliesByParent = {}
@@ -492,7 +503,7 @@ function App() {
       title: finalTitle,
       url: finalUrl,
       platform: essayPlatform || 'Substack',
-      category: essayCategory || 'BOOK REFLECTIONS & REVIEWS',
+      category: essayCategory || 'Book Reflections & Reviews',
       coverImage: essayCoverImage.trim() || '/articles/article1.jpeg',
       teaser: essayTeaser.trim() || `A thoughtful essay shared by ${authorDisplayName} on ${essayPlatform || 'Substack'}.`,
       author: authorDisplayName,
@@ -2951,11 +2962,11 @@ function App() {
                         }}
                       >
                         <option value="" disabled>Select a literary shelf...</option>
-                        <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
-                        <option value="READING HABITS & PSYCHOLOGY">Reading Habits & Psychology</option>
-                        <option value="AUTHOR DEEP DIVES & STORIES">Author Deep Dives & Stories</option>
-                        <option value="BOOKS THAT CHANGED MY LIFE">Books That Changed My Life</option>
-                        <option value="THE READING LIFE & PHILOSOPHY">The Reading Life & Philosophy</option>
+                        {READING_ROOM_CATEGORIES.map((cat) => (
+                          <option key={cat} value={cat}>
+                            {cat}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
