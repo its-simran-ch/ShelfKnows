@@ -2793,7 +2793,7 @@ function App() {
                 <div className="recommend-card-box essay-share-card-box" style={{ maxWidth: '880px', marginBottom: '3.5rem', animation: 'fadeIn 0.3s ease' }}>
                   <div style={{ marginBottom: '1.4rem', borderBottom: '1px solid var(--border-warm)', paddingBottom: '0.9rem' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.45rem', color: 'var(--forest-deep)', margin: 0 }}>
-                      Share What You've Written, We'd Love to Read ❤️
+                      Share What You've Written, We'd Love to Read It ❤️
                     </h3>
                   </div>
 
