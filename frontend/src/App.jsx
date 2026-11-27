@@ -3045,7 +3045,13 @@ function App() {
                   {readingRoomArticles.map((article) => {
                     const isExternal = Boolean(article.url)
                     const platformName = article.platform || (isExternal ? 'Substack' : null)
-                    const canManage = article.author_id === user?.id || article.author === (profile?.full_name || 'Simran Chaudhary') || userArticles.some((a) => a.id === article.id)
+                    const isSeedArticle = articlesData.some((a) => a.id === article.id)
+                    const isOwnArticle = Boolean(
+                      (user && article.author_id && article.author_id === user.id) ||
+                      userArticles.some((a) => a.id === article.id) ||
+                      (user && profile?.full_name && article.author === profile.full_name)
+                    )
+                    const canManage = !isSeedArticle && isOwnArticle
 
                     return (
                       <article
