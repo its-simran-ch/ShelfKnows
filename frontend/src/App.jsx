@@ -4430,7 +4430,7 @@ function App() {
                     rows={5}
                     required
                     className="recommend-textarea"
-                    placeholder="Tell us like you're recommending it to a friend over chai — did it change your perspective, make you smile, or stay with you long after the last page? Write whatever comes naturally to your heart..."
+                    placeholder="Tell us like you're recommending it to a friend over chai — did it change your perspective, make you smile, or stay with you long after the last page? No fancy review needed, just your honest thoughts..."
                     value={commWhyLoved}
                     onChange={(e) => setCommWhyLoved(e.target.value)}
                   />
