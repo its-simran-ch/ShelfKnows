@@ -2828,7 +2828,7 @@ function App() {
                         <option value="" disabled>Select a literary shelf...</option>
                         <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
                         <option value="READING HABITS & PSYCHOLOGY">Reading Habits & Psychology</option>
-                        <option value="AUTHOR DEEP DIVES & LITERARY LORE">Author Deep Dives & Lore</option>
+                        <option value="AUTHOR DEEP DIVES & STORIES">Author Deep Dives & Stories</option>
                         <option value="BOOKS THAT CHANGED MY LIFE">Books That Changed My Life</option>
                         <option value="THE READING LIFE & PHILOSOPHY">The Reading Life & Philosophy</option>
                       </select>
