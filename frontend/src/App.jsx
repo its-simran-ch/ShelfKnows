@@ -4731,26 +4731,9 @@ function App() {
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
-                        <span className="community-genre-badge">
-                          {post.genre || 'Other'}
-                        </span>
-                        {canManageCommunityPost(post) && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              if (window.confirm(`Are you sure you want to delete "${post.book_title}" from the community?`)) {
-                                handleDeleteCommunityPost(post.id)
-                              }
-                            }}
-                            className="article-delete-btn"
-                            title="Delete recommendation"
-                          >
-                            ✕ Delete
-                          </button>
-                        )}
-                      </div>
+                      <span className="community-genre-badge">
+                        {post.genre || 'Other'}
+                      </span>
                     </div>
 
                     {/* Highlighted 3D Book & Info Showcase */}
@@ -4888,6 +4871,24 @@ function App() {
                         <span style={{ fontSize: '1.05rem', lineHeight: 1 }}>{isSaved ? '★' : '☆'}</span>
                         <span>{isSaved ? 'On Your Shelf' : 'Save to My Shelf'}</span>
                       </button>
+
+                      {canManageCommunityPost(post) && (
+                        <button
+                          type="button"
+                          className="community-action-btn"
+                          style={{ color: '#DC2626', marginLeft: 'auto' }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (window.confirm(`Are you sure you want to delete "${post.book_title}" from the community?`)) {
+                              handleDeleteCommunityPost(post.id)
+                            }
+                          }}
+                          title="Delete recommendation"
+                        >
+                          <span style={{ fontSize: '0.95rem' }}>🗑️</span>
+                          <span>Delete</span>
+                        </button>
+                      )}
                     </div>
 
                     {/* Instagram-Style Thoughts / Comments Thread */}
