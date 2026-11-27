@@ -65,11 +65,61 @@ const getCommentThreads = (comments = []) => {
 }
 
 const CommunityBookCover = ({ cover, title, author, genre }) => {
+  const [resolvedCover, setResolvedCover] = useState(cover)
   const [imgError, setImgError] = useState(false)
 
   useEffect(() => {
-    setImgError(false)
-  }, [cover])
+    // If the cover was erroneously mapped to Mel Robbins' "The Let Them Theory" cover (id 15152033) for a different book
+    const isCorruptedCover = cover === 'https://covers.openlibrary.org/b/id/15152033-M.jpg' && !title?.toLowerCase().includes('let them')
+
+    if (cover && !isCorruptedCover) {
+      setResolvedCover(cover)
+      setImgError(false)
+      return
+    }
+
+    // Auto-fetch real cover if missing or corrupted
+    let active = true
+    const fetchRealCover = async () => {
+      const cleanTitle = (title || '').trim()
+      const cleanAuthor = author && author !== 'Unknown Author' ? author.trim() : ''
+      const q = encodeURIComponent(`${cleanTitle} ${cleanAuthor}`.trim())
+
+      try {
+        const olRes = await fetch(`https://openlibrary.org/search.json?q=${q}&limit=1`)
+        if (olRes.ok) {
+          const olData = await olRes.json()
+          const coverId = olData?.docs?.[0]?.cover_i
+          if (coverId && active) {
+            setResolvedCover(`https://covers.openlibrary.org/b/id/${coverId}-M.jpg`)
+            setImgError(false)
+            return
+          }
+        }
+      } catch { }
+
+      try {
+        const gbRes = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1`)
+        if (gbRes.ok) {
+          const gbData = await gbRes.json()
+          const thumb = gbData?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail ||
+                        gbData?.items?.[0]?.volumeInfo?.imageLinks?.smallThumbnail || null
+          if (thumb && active) {
+            setResolvedCover(thumb.replace(/^http:\/\//i, 'https://'))
+            setImgError(false)
+            return
+          }
+        }
+      } catch { }
+
+      if (active) {
+        setResolvedCover(null)
+      }
+    }
+
+    fetchRealCover()
+    return () => { active = false }
+  }, [cover, title, author])
 
   const getCoverBg = (g) => {
     if (!g) return 'linear-gradient(135deg, #1b3226 0%, #0d1e16 100%)'
@@ -83,14 +133,14 @@ const CommunityBookCover = ({ cover, title, author, genre }) => {
     return 'linear-gradient(135deg, #1b3226 0%, #0d1e16 100%)'
   }
 
-  const showFallback = !cover || imgError
+  const showFallback = !resolvedCover || imgError
 
   return (
     <div className="community-cover-spine-wrap">
       <div className="community-cover-3d">
         {!showFallback ? (
           <img
-            src={cover}
+            src={resolvedCover}
             alt={title}
             onError={() => setImgError(true)}
             className="community-cover-img"
@@ -614,35 +664,38 @@ function App() {
           }
 
           return parsed.map((p, idx) => {
-            const initialMatch = INITIAL_COMMUNITY_POSTS.find((ip) => ip.id === p.id) || INITIAL_COMMUNITY_POSTS[idx]
-            const authorName = p.author_name || initialMatch?.author_name || 'Reader'
-            const authorGender = p.gender || initialMatch?.gender || null
+            const initialMatch = INITIAL_COMMUNITY_POSTS.find((ip) => ip.id === p.id)
+            if (initialMatch) {
+              const authorName = p.author_name || initialMatch.author_name || 'Reader'
+              const authorGender = p.gender || initialMatch.gender || null
+              return {
+                ...initialMatch,
+                ...p,
+                book_title: initialMatch.book_title,
+                book_author: initialMatch.book_author,
+                book_cover: initialMatch.book_cover,
+                why_loved: initialMatch.why_loved,
+                favorite_quote: initialMatch.favorite_quote,
+                genre: initialMatch.genre,
+                author_role: 'Your Fellow Reader',
+                date: '',
+                avatar: resolveAvatar(initialMatch.avatar || p.avatar, authorName, authorGender),
+                gender: authorGender || 'female',
+                liked_by: Array.isArray(p.liked_by) ? p.liked_by : (initialMatch.liked_by || []),
+                comments: Array.isArray(p.comments) ? p.comments : (initialMatch.comments || [])
+              }
+            }
+
+            const authorName = p.author_name || 'Reader'
+            const authorGender = p.gender || null
+            const isCorruptedCover = p.book_cover === 'https://covers.openlibrary.org/b/id/15152033-M.jpg' && !p.book_title?.toLowerCase().includes('let them')
+
             return {
               ...p,
-              book_title: p.id === 'post-1' ? initialMatch.book_title : (p.book_title || initialMatch?.book_title),
-              book_author: p.id === 'post-1' ? initialMatch.book_author : (p.book_author || initialMatch?.book_author),
-              book_cover: p.id === 'post-1' ? initialMatch.book_cover : (initialMatch?.book_cover || p.book_cover || null),
-              why_loved: p.id === 'post-1' ? initialMatch.why_loved : (p.why_loved || initialMatch?.why_loved),
-              favorite_quote: p.id === 'post-1' ? initialMatch.favorite_quote : (p.favorite_quote || initialMatch?.favorite_quote),
-              genre: p.id === 'post-1' ? initialMatch.genre : (p.genre || initialMatch?.genre || 'Self-Help & Personal Growth'),
-              author_role: p.id === 'post-1' ? 'Your Fellow Reader' : (p.author_role || initialMatch?.author_role || 'Reader'),
-              date: p.id === 'post-1' ? '' : (p.date !== undefined ? p.date : (initialMatch?.date || '')),
-              avatar: resolveAvatar(initialMatch?.avatar || p.avatar, authorName, authorGender),
-              gender: authorGender || (resolveAvatar(null, authorName, null).includes('male') ? 'male' : 'female'),
-              liked_by: Array.isArray(p.liked_by) && p.liked_by.length > 0 ? p.liked_by.map((u) => ({
-                ...u,
-                avatar: resolveAvatar(u.avatar, u.name, u.gender)
-              })) : (initialMatch?.liked_by || []),
-              comments: Array.isArray(p.comments) ? p.comments.map((c, cIdx) => ({
-                id: c?.id || `c-${idx}-${cIdx}-${Date.now()}`,
-                author_name: c?.author_name || c?.author || 'Reader',
-                avatar: resolveAvatar(c?.avatar || (initialMatch?.comments?.[cIdx]?.avatar || null), c?.author_name || c?.author, c?.gender || initialMatch?.comments?.[cIdx]?.gender),
-                gender: c?.gender || (initialMatch?.comments?.[cIdx]?.gender || null),
-                text: c?.text || c?.content || '',
-                date: c?.date || 'Recently',
-                reply_to_id: c?.reply_to_id || null,
-                reply_to_name: c?.reply_to_name || null
-              })) : (initialMatch?.comments || []),
+              book_cover: isCorruptedCover ? null : p.book_cover,
+              avatar: resolveAvatar(p.avatar, authorName, authorGender),
+              liked_by: Array.isArray(p.liked_by) ? p.liked_by : [],
+              comments: Array.isArray(p.comments) ? p.comments : []
             }
           })
         }
@@ -680,6 +733,16 @@ function App() {
     ? communityPosts
     : communityPosts.filter((p) => (p.genre || 'Other') === communityGenreFilter)
 
+  // Track community recommendations authored in this browser session
+  const [myCommunityPostIds, setMyCommunityPostIds] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('shelfknows_my_community_post_ids') || '[]')
+      return Array.isArray(stored) ? stored : []
+    } catch {
+      return []
+    }
+  })
+
   const handleCreateCommunityPost = async (e) => {
     e.preventDefault()
     if (!commBookTitle.trim() || !commWhyLoved.trim()) return
@@ -690,19 +753,35 @@ function App() {
     const authorVal = commBookAuthor.trim() || 'Unknown Author'
 
     let coverUrl = null
+    const cleanTitle = titleVal.trim()
+    const cleanAuthor = authorVal !== 'Unknown Author' ? authorVal.trim() : ''
+    const searchQ = encodeURIComponent(`${cleanTitle} ${cleanAuthor}`.trim())
+
+    // 1. Try Open Library for authentic book cover
     try {
-      const q = encodeURIComponent(`${titleVal} ${authorVal !== 'Unknown Author' ? authorVal : ''}`.trim())
-      const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${q}&maxResults=1`)
-      if (res.ok) {
-        const data = await res.json()
-        const thumb = data?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail ||
-                      data?.items?.[0]?.volumeInfo?.imageLinks?.smallThumbnail || null
-        if (thumb) {
-          coverUrl = thumb.replace(/^http:\/\//i, 'https://')
+      const olRes = await fetch(`https://openlibrary.org/search.json?q=${searchQ}&limit=1`)
+      if (olRes.ok) {
+        const olData = await olRes.json()
+        const coverId = olData?.docs?.[0]?.cover_i
+        if (coverId) {
+          coverUrl = `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`
         }
       }
-    } catch {
-      coverUrl = null
+    } catch { }
+
+    // 2. Fallback to Google Books
+    if (!coverUrl) {
+      try {
+        const res = await fetch(`https://www.googleapis.com/books/v1/volumes?q=${searchQ}&maxResults=1`)
+        if (res.ok) {
+          const data = await res.json()
+          const thumb = data?.items?.[0]?.volumeInfo?.imageLinks?.thumbnail ||
+                        data?.items?.[0]?.volumeInfo?.imageLinks?.smallThumbnail || null
+          if (thumb) {
+            coverUrl = thumb.replace(/^http:\/\//i, 'https://')
+          }
+        }
+      } catch { }
     }
 
     const authorHeadline = commAuthorRole.trim() || profile?.headline || user?.user_metadata?.headline || 'Reader'
@@ -728,6 +807,14 @@ function App() {
     }
 
     setCommunityPosts((prev) => [newPost, ...prev])
+    setMyCommunityPostIds((prev) => {
+      const updated = [newPost.id, ...prev]
+      try {
+        localStorage.setItem('shelfknows_my_community_post_ids', JSON.stringify(updated))
+      } catch { }
+      return updated
+    })
+
     setCommBookTitle('')
     setCommBookAuthor('')
     setCommGenre('')
@@ -740,18 +827,27 @@ function App() {
 
   const handleDeleteCommunityPost = (postId) => {
     setCommunityPosts((prev) => prev.filter((p) => p.id !== postId))
+    setMyCommunityPostIds((prev) => {
+      const updated = prev.filter((id) => id !== postId)
+      try {
+        localStorage.setItem('shelfknows_my_community_post_ids', JSON.stringify(updated))
+      } catch { }
+      return updated
+    })
   }
 
   const canManageCommunityPost = (post) => {
     if (!post) return false
-    const isSeedPost = post.id === 'post-1'
-    if (isSeedPost) return false
+    // ShelfKnows Creator / Admin has master permission to delete any recommendation
     if (isCreatorOrAdmin) return true
-    const activeName = (profile?.full_name || user?.user_metadata?.full_name || '').trim().toLowerCase()
+
+    const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim().toLowerCase()
     const activeId = user?.id || null
     const postAuthor = (post.author_name || '').trim().toLowerCase()
+    const isLocalPost = myCommunityPostIds.includes(post.id)
     const isOwnPost = (activeId && post.author_id && post.author_id === activeId) ||
-      (activeName && postAuthor && activeName === postAuthor)
+      (activeName && postAuthor && activeName === postAuthor) ||
+      isLocalPost
     return Boolean(isOwnPost)
   }
 
@@ -4576,6 +4672,24 @@ function App() {
                 >
                   Recommend a {communityGenreFilter} Book
                 </button>
+                {communityPosts.length === 0 && (
+                  <button
+                    type="button"
+                    style={{
+                      background: 'transparent',
+                      border: '1px solid var(--border-warm)',
+                      padding: '0.75rem 1.6rem',
+                      borderRadius: '9999px',
+                      cursor: 'pointer',
+                      fontSize: '0.88rem',
+                      color: 'var(--text-muted)',
+                      marginLeft: '0.8rem'
+                    }}
+                    onClick={() => setCommunityPosts(INITIAL_COMMUNITY_POSTS)}
+                  >
+                    Restore Sample Recommendations
+                  </button>
+                )}
               </div>
             ) : (
               filteredCommunityPosts.map((post) => {
@@ -4626,14 +4740,14 @@ function App() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation()
-                              if (window.confirm('Are you sure you want to remove this recommendation from the community?')) {
+                              if (window.confirm(`Are you sure you want to delete "${post.book_title}" from the community?`)) {
                                 handleDeleteCommunityPost(post.id)
                               }
                             }}
                             className="article-delete-btn"
-                            title="Remove recommendation"
+                            title="Delete recommendation"
                           >
-                            ✕ Remove
+                            ✕ Delete
                           </button>
                         )}
                       </div>
@@ -4774,6 +4888,24 @@ function App() {
                         <span style={{ fontSize: '1.05rem', lineHeight: 1 }}>{isSaved ? '★' : '☆'}</span>
                         <span>{isSaved ? 'On Your Shelf' : 'Save to My Shelf'}</span>
                       </button>
+
+                      {canManageCommunityPost(post) && (
+                        <button
+                          type="button"
+                          className="community-action-btn"
+                          style={{ color: '#DC2626', marginLeft: 'auto' }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (window.confirm(`Are you sure you want to delete "${post.book_title}" from the community?`)) {
+                              handleDeleteCommunityPost(post.id)
+                            }
+                          }}
+                          title="Delete recommendation"
+                        >
+                          <span style={{ fontSize: '0.95rem' }}>🗑️</span>
+                          <span>Delete</span>
+                        </button>
+                      )}
                     </div>
 
                     {/* Instagram-Style Thoughts / Comments Thread */}
