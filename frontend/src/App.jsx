@@ -163,6 +163,15 @@ function App() {
   // Auth & Profile State (Supabase)
   const [user, setUser] = useState(null)
   const [profile, setProfile] = useState(null)
+
+  // ShelfKnows Creator / Admin privileges (Simran Chaudhary / Admin role)
+  const isCreatorOrAdmin = Boolean(
+    profile?.role === 'admin' ||
+    profile?.role === 'creator' ||
+    user?.email?.toLowerCase().includes('simran') ||
+    profile?.full_name?.toLowerCase().includes('simran') ||
+    user?.user_metadata?.full_name?.toLowerCase().includes('simran')
+  )
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [authMode, setAuthMode] = useState('signin') // 'signin' or 'signup'
   const [authEmail, setAuthEmail] = useState('')
@@ -729,6 +738,23 @@ function App() {
     setShowCommunityForm(false)
   }
 
+  const handleDeleteCommunityPost = (postId) => {
+    setCommunityPosts((prev) => prev.filter((p) => p.id !== postId))
+  }
+
+  const canManageCommunityPost = (post) => {
+    if (!post) return false
+    const isSeedPost = post.id === 'post-1'
+    if (isSeedPost) return false
+    if (isCreatorOrAdmin) return true
+    const activeName = (profile?.full_name || user?.user_metadata?.full_name || '').trim().toLowerCase()
+    const activeId = user?.id || null
+    const postAuthor = (post.author_name || '').trim().toLowerCase()
+    const isOwnPost = (activeId && post.author_id && post.author_id === activeId) ||
+      (activeName && postAuthor && activeName === postAuthor)
+    return Boolean(isOwnPost)
+  }
+
   const handleToggleLike = (postId) => {
     const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim()
     const activeAvatar = userAvatar === 'male' ? MALE_AVATAR_SRC : FEMALE_AVATAR_SRC
@@ -850,6 +876,8 @@ function App() {
 
   const canDeleteComment = (post, comment) => {
     if (!post || !comment) return false
+    // ShelfKnows Creator / Admin can moderate and delete any negative or spam comment
+    if (isCreatorOrAdmin) return true
 
     const activeName = (profile?.full_name || user?.user_metadata?.full_name || (user ? 'Reader' : 'Simran Chaudhary')).trim().toLowerCase()
     const activeId = user?.id || null
@@ -3051,7 +3079,7 @@ function App() {
                       userArticles.some((a) => a.id === article.id) ||
                       (user && profile?.full_name && article.author === profile.full_name)
                     )
-                    const canManage = !isSeedArticle && isOwnArticle
+                    const canManage = !isSeedArticle && (isOwnArticle || isCreatorOrAdmin)
 
                     return (
                       <article
@@ -4589,9 +4617,26 @@ function App() {
                         </div>
                       </div>
 
-                      <span className="community-genre-badge">
-                        {post.genre || 'Other'}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                        <span className="community-genre-badge">
+                          {post.genre || 'Other'}
+                        </span>
+                        {canManageCommunityPost(post) && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (window.confirm('Are you sure you want to remove this recommendation from the community?')) {
+                                handleDeleteCommunityPost(post.id)
+                              }
+                            }}
+                            className="article-delete-btn"
+                            title="Remove recommendation"
+                          >
+                            ✕ Remove
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Highlighted 3D Book & Info Showcase */}
