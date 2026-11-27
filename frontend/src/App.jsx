@@ -4888,24 +4888,6 @@ function App() {
                         <span style={{ fontSize: '1.05rem', lineHeight: 1 }}>{isSaved ? '★' : '☆'}</span>
                         <span>{isSaved ? 'On Your Shelf' : 'Save to My Shelf'}</span>
                       </button>
-
-                      {canManageCommunityPost(post) && (
-                        <button
-                          type="button"
-                          className="community-action-btn"
-                          style={{ color: '#DC2626', marginLeft: 'auto' }}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (window.confirm(`Are you sure you want to delete "${post.book_title}" from the community?`)) {
-                              handleDeleteCommunityPost(post.id)
-                            }
-                          }}
-                          title="Delete recommendation"
-                        >
-                          <span style={{ fontSize: '0.95rem' }}>🗑️</span>
-                          <span>Delete</span>
-                        </button>
-                      )}
                     </div>
 
                     {/* Instagram-Style Thoughts / Comments Thread */}
