@@ -167,88 +167,6 @@ const CommunityBookCover = ({ cover, title, author, genre }) => {
   )
 }
 
-const LITERARY_CATEGORIES = [
-  { value: 'BOOK REFLECTIONS & REVIEWS', label: 'Book Reflections & Reviews' },
-  { value: 'READING HABITS & PSYCHOLOGY', label: 'Reading Habits & Psychology' },
-  { value: 'AUTHOR DEEP DIVES & STORIES', label: 'Author Deep Dives & Stories' },
-  { value: 'BOOKS THAT CHANGED MY LIFE', label: 'Books That Changed My Life' },
-  { value: 'THE READING LIFE & PHILOSOPHY', label: 'The Reading Life & Philosophy' }
-]
-
-const ShelfCustomSelect = ({ value, onChange, options, placeholder = 'Select an option...', required = false }) => {
-  const [open, setOpen] = useState(false)
-  const dropdownRef = useRef(null)
-
-  useEffect(() => {
-    const handleOutsideClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleOutsideClick)
-    return () => document.removeEventListener('mousedown', handleOutsideClick)
-  }, [])
-
-  const selectedOption = options.find((opt) => (typeof opt === 'string' ? opt : opt.value) === value)
-  const displayLabel = selectedOption
-    ? (typeof selectedOption === 'string' ? selectedOption : selectedOption.label)
-    : null
-
-  return (
-    <div className="shelf-custom-select-wrap" ref={dropdownRef}>
-      {required && (
-        <input
-          type="text"
-          value={value || ''}
-          required
-          tabIndex={-1}
-          style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', height: 0, width: 0, bottom: 0, left: '20px' }}
-          onChange={() => {}}
-        />
-      )}
-
-      <button
-        type="button"
-        className={`shelf-custom-select-trigger ${open ? 'open' : ''}`}
-        onClick={() => setOpen(!open)}
-      >
-        <span className={`shelf-custom-select-label ${!displayLabel ? 'placeholder' : ''}`}>
-          {displayLabel || placeholder}
-        </span>
-        <span className="shelf-custom-select-chevron">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s ease' }}>
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </span>
-      </button>
-
-      {open && (
-        <div className="shelf-custom-select-menu">
-          {options.map((opt) => {
-            const optVal = typeof opt === 'string' ? opt : opt.value
-            const optLabel = typeof opt === 'string' ? opt : opt.label
-            const isSelected = optVal === value
-
-            return (
-              <div
-                key={optVal}
-                className={`shelf-custom-select-option ${isSelected ? 'selected' : ''}`}
-                onClick={() => {
-                  onChange(optVal)
-                  setOpen(false)
-                }}
-              >
-                <span>{optLabel}</span>
-                {isSelected && <span className="shelf-custom-select-check">✓</span>}
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
 const FEMALE_AVATAR_SRC = '/Avatar/female_profile.png?v=3'
 const MALE_AVATAR_SRC = '/Avatar/male_profile.png?v=3'
 
@@ -3009,13 +2927,35 @@ function App() {
                       <label style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--forest-deep)', marginBottom: '0.55rem' }}>
                         <span>Literary Category / Shelf</span> <span style={{ color: '#E11D48' }}>*</span>
                       </label>
-                      <ShelfCustomSelect
+                      <select
                         required
                         value={essayCategory}
-                        onChange={setEssayCategory}
-                        options={LITERARY_CATEGORIES}
-                        placeholder="Select a literary shelf..."
-                      />
+                        onChange={(e) => setEssayCategory(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '0.75rem 2.5rem 0.75rem 1rem',
+                          borderRadius: '12px',
+                          border: '1.5px solid var(--border-warm)',
+                          background: 'var(--bg-surface-soft)',
+                          fontFamily: 'inherit',
+                          fontSize: '0.9rem',
+                          color: essayCategory ? 'var(--text-dark)' : 'var(--text-muted)',
+                          cursor: 'pointer',
+                          appearance: 'none',
+                          WebkitAppearance: 'none',
+                          backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232D3748' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                          backgroundRepeat: 'no-repeat',
+                          backgroundPosition: 'right 0.9rem center',
+                          backgroundSize: '1.1rem'
+                        }}
+                      >
+                        <option value="" disabled>Select a literary shelf...</option>
+                        <option value="BOOK REFLECTIONS & REVIEWS">Book Reflections & Reviews</option>
+                        <option value="READING HABITS & PSYCHOLOGY">Reading Habits & Psychology</option>
+                        <option value="AUTHOR DEEP DIVES & STORIES">Author Deep Dives & Stories</option>
+                        <option value="BOOKS THAT CHANGED MY LIFE">Books That Changed My Life</option>
+                        <option value="THE READING LIFE & PHILOSOPHY">The Reading Life & Philosophy</option>
+                      </select>
                     </div>
 
                     {/* 2. Article URL */}
@@ -4548,13 +4488,17 @@ function App() {
                     <label className="recommend-label">
                       <span>Reading Theme / Category</span> <span style={{ color: '#E11D48' }}>*</span>
                     </label>
-                    <ShelfCustomSelect
+                    <select
                       required
+                      className="recommend-input"
                       value={commGenre}
-                      onChange={setCommGenre}
-                      options={COMMUNITY_GENRES}
-                      placeholder="Select a Theme..."
-                    />
+                      onChange={(e) => setCommGenre(e.target.value)}
+                    >
+                      <option value="" disabled>Select a Theme...</option>
+                      {COMMUNITY_GENRES.map((g) => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Box 4: Favorite Quote */}
