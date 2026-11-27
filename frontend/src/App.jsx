@@ -4403,7 +4403,7 @@ function App() {
           {/* Hero Header */}
           <div className="editorial-page-hero" style={{ marginBottom: '3.5rem', textAlign: 'center' }}>
             <h1 className="editorial-page-title">
-              The Reader Community
+              The Community
             </h1>
 
             <p className="editorial-page-subtitle" style={{ maxWidth: '680px', margin: '0 auto 2.2rem auto', fontSize: '1.08rem', lineHeight: 1.8 }}>
@@ -4440,7 +4440,7 @@ function App() {
                       color: 'var(--forest-deep)',
                       margin: 0
                     }}>
-                      Talk About Your Favourite Books with the Community
+                      Talk About Your Favourite Books with the Community ❤️
                     </h3>
                   </div>
                   <button
@@ -5108,7 +5108,7 @@ function App() {
               color: 'var(--gold-accent)',
               margin: '0 0 1rem 0'
             }}>
-              The Reader Community
+              The Community
             </h5>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
               A warm, quiet corner where book lovers leave behind the stories that touched their lives, share favorite lines, and connect over thoughtful reads.
