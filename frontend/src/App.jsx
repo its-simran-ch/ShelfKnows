@@ -15,6 +15,7 @@ const COMMUNITY_GENRES = [
   'Romance & Relationships',
   'Biography & Memoir',
   'Business, Finance & Tech',
+  'History, Politics & Society',
   'Poetry & Essays',
   'Other'
 ]
