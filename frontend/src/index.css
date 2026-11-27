@@ -4904,14 +4904,24 @@ select.recommend-input:focus {
   flex-direction: column;
   gap: 2px;
   animation: fadeIn 0.18s ease;
+  scrollbar-width: thin;
+  scrollbar-color: var(--forest-deep) rgba(18, 18, 18, 0.08);
 }
 
 .shelf-custom-select-menu::-webkit-scrollbar {
   width: 6px;
 }
+.shelf-custom-select-menu::-webkit-scrollbar-track {
+  background: rgba(18, 18, 18, 0.06);
+  border-radius: 9999px;
+  margin: 6px 0;
+}
 .shelf-custom-select-menu::-webkit-scrollbar-thumb {
-  background: var(--border-warm);
-  border-radius: 4px;
+  background: var(--forest-deep);
+  border-radius: 9999px;
+}
+.shelf-custom-select-menu::-webkit-scrollbar-thumb:hover {
+  background: #000000;
 }
 
 .shelf-custom-select-option {
