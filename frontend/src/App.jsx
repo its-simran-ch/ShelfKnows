@@ -3536,17 +3536,23 @@ function App() {
               boxShadow: 'var(--shadow-card)',
               position: 'relative'
             }}>
-              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.3rem', marginTop: 0 }}>
-                Traditional search bars on most book platforms are built for exact lookup — they work great when you already know a title or an author. But as readers, most of the time we don't have an exact book title in mind. We usually just know <strong>how we want to feel</strong> — maybe a slow, comforting story on a quiet evening, a mind-bending mystery that makes you curious to know what's next, or a thoughtful book about people figuring out their lives.
+              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.2rem', marginTop: 0 }}>
+                As readers, our desire to pick up a book usually comes from where we are in life — a mood, an unanswered question, or a specific phase we are navigating.
               </p>
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.3rem', fontWeight: 800, color: 'var(--forest-deep)', margin: '1.6rem 0 0.75rem 0' }}>
-                So, what do readers usually do when they don't know the title?
-              </h3>
-              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.3rem' }}>
-                Most people either post on communities like Reddit's <em>r/suggestmeabook</em> and wait hours for replies, or turn to general AI chatbots — where the catch is that chatbots often recommend books that don't actually exist (AI hallucinations), or get the plot details completely wrong.
+              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.2rem' }}>
+                Whenever things feel a bit stuck or aren't working out, I find myself looking for books on habits, focus, and ways to get back on track. When I'm curious to learn something new — like tech, machine learning, or a new skill — I look for books that teach me something useful. And on days when I feel low, tired, or simply want to relax with a cup of chai, I just want a good story to get lost in — whether that's a warm, comforting read or a thrilling mystery.
+              </p>
+              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.2rem' }}>
+                The funny thing is, in all these moments, we rarely know an exact book title or author. We just know what we're going through, how we want to feel, or what we need help with.
+              </p>
+              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.2rem' }}>
+                That's really the whole reason I built <strong>ShelfKnows</strong>.
+              </p>
+              <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', marginBottom: '1.2rem' }}>
+                I wanted a place where you don't have to worry about search keywords or book titles. You can just type whatever is on your mind in your own everyday words — a feeling, a goal, a mood, or a phase of life — and find real, thoughtful books that actually fit that moment.
               </p>
               <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', margin: 0 }}>
-                That's why <strong>ShelfKnows</strong> was built. It bridges that gap by understanding the mood and meaning behind your everyday words, connecting your descriptions directly to a verified catalog of <strong>50,000+ real books</strong> — with genuine reader ratings, thoughtful explanations, and zero guesswork.
+                And beyond finding books, it's also a quiet little corner to save your favorites to your personal shelf, recommend a book and talk about stories with other readers in <strong>The Community</strong>, and share your reading experiences and how books have shaped your life in <strong>The Reading Room</strong>.
               </p>
             </div>
           </div>
