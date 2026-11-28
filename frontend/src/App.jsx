@@ -3634,25 +3634,13 @@ function App() {
                 <p
                   className="literary-quote-text"
                   style={{
-                    fontSize: '1.28rem',
-                    lineHeight: 1.72,
-                    marginBottom: '1.25rem',
-                    maxWidth: '100%'
-                  }}
-                >
-                  “ShelfKnows started out of my own habit of collecting books and then wondering what to read next. As a reader who loves thoughtful stories and as someone who builds software, I wanted to create something that feels like walking into a cozy, quiet bookstore with a friend who actually listens to the kind of story you crave.
-                </p>
-
-                <p
-                  className="literary-quote-text"
-                  style={{
-                    fontSize: '1.22rem',
+                    fontSize: '1.26rem',
                     lineHeight: 1.72,
                     marginBottom: '1.6rem',
                     maxWidth: '100%'
                   }}
                 >
-                  I hope ShelfKnows helps you find a story that stays with you long after the last page.”
+                  “At the end of the day, a good book is like a quiet conversation that changes you just a little bit. I hope ShelfKnows leads you to a story that stays with you long after the last page — welcome to ShelfKnows. Happy reading.”
                 </p>
 
                 <div className="literary-quote-author">
