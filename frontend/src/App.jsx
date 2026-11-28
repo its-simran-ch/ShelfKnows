@@ -3653,15 +3653,9 @@ function App() {
           {/* Section 5: Frequently Asked Questions */}
           <div style={{ marginBottom: '3.5rem' }}>
             <div className="arch-story-card">
-              <div style={{ display: 'inline-block', fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', marginBottom: '0.4rem' }}>
-                Got Questions?
-              </div>
-              <h2 className="arch-card-title">
+              <h2 className="arch-card-title" style={{ marginBottom: '1.8rem' }}>
                 Frequently Asked Questions
               </h2>
-              <p className="arch-card-subtitle">
-                A few common questions about using ShelfKnows to discover your next read:
-              </p>
 
               <div className="arch-faq-list">
                 {[
