@@ -3574,7 +3574,7 @@ function App() {
                 border: '1px solid var(--border-warm)',
                 borderRadius: '16px',
                 padding: '1.4rem 1.6rem',
-                marginBottom: '1.6rem'
+                margin: 0
               }}>
                 <div style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--forest-deep)', marginBottom: '0.75rem' }}>
                   Instead of rigid keywords, you can literally search:
@@ -3619,10 +3619,6 @@ function App() {
                   ))}
                 </div>
               </div>
-
-              <p style={{ fontSize: '1rem', color: 'var(--text-dark)', lineHeight: 1.75, margin: 0 }}>
-                ShelfKnows doesn't just match exact titles or keywords. It understands the emotional tone, vibes, and themes behind your words, connecting your prompt to a verified catalog of <strong>50,000+ real books</strong> — bringing you recommendations that truly match the feeling.
-              </p>
             </div>
           </div>
 
