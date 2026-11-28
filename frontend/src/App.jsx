@@ -3690,6 +3690,10 @@ function App() {
                   {
                     q: "How does 'My Shelf' work, and can I access it across devices?",
                     a: "You can save any book to your personal shelf with a single click. When browsing as a guest, your saved books stay safely stored in your browser. When you create a free account, your shelf syncs seamlessly across your phone, tablet, and laptop in real time."
+                  },
+                  {
+                    q: "Can I recommend books or share my own writing on ShelfKnows?",
+                    a: "Yes, absolutely! ShelfKnows is built for fellow readers. You can recommend books that touched you in The Community, or share your own essays, reading reflections, and Substack newsletters directly in The Reading Room."
                   }
                 ].map((faq, idx) => (
                   <div key={idx} className="arch-faq-item">
