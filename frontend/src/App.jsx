@@ -3515,8 +3515,11 @@ function App() {
           {/* Hero Header */}
           <div className="editorial-page-hero" style={{ marginBottom: '2.5rem' }}>
             <h1 className="editorial-page-title">About ShelfKnows</h1>
-            <p className="editorial-page-subtitle" style={{ maxWidth: '640px', margin: '0 auto', fontSize: '1.05rem', lineHeight: 1.7 }}>
-              A quiet, thoughtful corner for book lovers who discover stories through moods, feelings, and themes.
+            <p className="editorial-page-subtitle" style={{ maxWidth: '720px', margin: '0 auto', fontSize: '1.08rem', lineHeight: 1.75, color: 'var(--text-dark)', fontWeight: 500 }}>
+              ShelfKnows is a quiet, intelligent corner for anyone who loves books.
+            </p>
+            <p className="editorial-page-subtitle" style={{ maxWidth: '720px', margin: '0.65rem auto 0 auto', fontSize: '0.98rem', lineHeight: 1.75, color: 'var(--text-muted)' }}>
+              Here, you can find your next read based on how you feel or what you want to learn, and build your own digital bookshelf. You can also recommend books and talk about stories in <strong>The Community</strong>, and share your reading experiences — or read what others have written — in <strong>The Reading Room</strong>.
             </p>
           </div>
 
