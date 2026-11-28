@@ -5111,7 +5111,7 @@ function App() {
               The Community
             </h5>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
-              A warm, quiet corner where book lovers leave behind the stories that touched their lives, share favorite lines, and connect over thoughtful reads.
+              A shared space where book lovers discover new reads through each other, and chat about the lines that stayed with them.
             </p>
             <div style={{ marginTop: '0.85rem', fontSize: '0.88rem', color: 'rgba(255, 255, 255, 0.75)', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
               <span>Visit the</span>
