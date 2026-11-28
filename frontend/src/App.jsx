@@ -5088,7 +5088,7 @@ function App() {
           <div className="footer-brand" style={{ maxWidth: '380px' }}>
             <h4>ShelfKnows</h4>
             <p style={{ fontSize: '0.88rem', lineHeight: 1.75, color: 'rgba(255, 255, 255, 0.75)', margin: 0 }}>
-              Step into an intelligent library crafted for lovers of deep reading. Tell us what you love or how you feel, and let ShelfKnows uncover the stories meant for you.
+              Tell us what you love or how you feel, and let ShelfKnows uncover the stories meant for you.
             </p>
           </div>
 
