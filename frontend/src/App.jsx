@@ -3092,8 +3092,9 @@ function App() {
                     {/* Publication Notice */}
                     <p style={{
                       fontFamily: 'var(--font-heading)',
-                      fontSize: '0.94rem',
                       fontStyle: 'italic',
+                      fontVariationSettings: "'SOFT' 100, 'WONK' 0",
+                      fontSize: '1.05rem',
                       lineHeight: 1.6,
                       color: 'var(--forest-deep)',
                       margin: '1.2rem 0 1.6rem 0',
