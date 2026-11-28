@@ -3516,7 +3516,7 @@ function App() {
           <div className="editorial-page-hero" style={{ marginBottom: '2.5rem' }}>
             <h1 className="editorial-page-title">About ShelfKnows</h1>
             <p className="editorial-page-subtitle" style={{ maxWidth: '640px', margin: '0 auto', fontSize: '1.05rem', lineHeight: 1.7 }}>
-              A quiet, thoughtful corner for book lovers who discover stories through moods, feelings, and themes — across <strong>50,000+ real books</strong>.
+              A quiet, thoughtful corner for book lovers who discover stories through moods, feelings, and themes.
             </p>
           </div>
 
