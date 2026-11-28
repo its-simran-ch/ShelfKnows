@@ -3099,7 +3099,7 @@ function App() {
                       margin: '1.2rem 0 1.6rem 0',
                       opacity: 0.9
                     }}>
-                      Your article will be published directly in The Reading Room for all fellow readers to read and discover.
+                      <strong style={{ fontStyle: 'normal' }}>Note:</strong> Your article will be published directly in The Reading Room for all fellow readers to read and discover.
                     </p>
 
                     {/* Action Buttons */}
@@ -4574,7 +4574,7 @@ function App() {
                   margin: '0.6rem 0 2.2rem 0',
                   opacity: 0.9
                 }}>
-                  Your recommendation will be published directly on this community feed with your chosen name.
+                  <strong style={{ fontStyle: 'normal' }}>Note:</strong> Your recommendation will be published directly on this community feed with your chosen name.
                 </p>
 
                 {/* Actions */}
