@@ -3555,7 +3555,7 @@ function App() {
                 I wanted a place where you don't have to worry about search keywords or book titles. You can just type whatever is on your mind in your own everyday words — a feeling, a goal, a mood, or a phase of life — and find real, thoughtful books that actually fit that moment.
               </p>
               <p style={{ color: 'var(--text-dark)', lineHeight: 1.8, fontSize: '1.02rem', margin: 0 }}>
-                And beyond finding books, it's also a quiet little corner to save your favorites to your personal shelf, recommend a book and talk about stories with other readers in <strong>The Community</strong>, and share your reading experiences and how books have shaped your life in <strong>The Reading Room</strong>.
+                And beyond finding books, it's also a quiet little corner to save your favorites to your personal shelf, recommend books and talk about stories with other readers in <strong>The Community</strong>, and share your reading experiences and how books have shaped your life in <strong>The Reading Room</strong>.
               </p>
             </div>
           </div>
